@@ -323,7 +323,7 @@ public enum Rule: String, CaseIterable {
     ]
     
     static var europeanLayout: [Item]  {
-        var sortedByNum = Rule.europeanWheel.sorted(by: {
+        let sortedByNum = Rule.europeanWheel.sorted(by: {
             $0.number.rawValue < $1.number.rawValue
         })
         

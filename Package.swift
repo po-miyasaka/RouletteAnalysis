@@ -46,7 +46,10 @@ let package = Package(
           dependencies: ["Utility"]
         ),
         .target(
-          name: "UserDefaultsClient"
+          name: "UserDefaultsClient",
+          dependencies: [
+            .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+          ]
         ),
         .testTarget(
             name: "RouletteFeatureTests",
