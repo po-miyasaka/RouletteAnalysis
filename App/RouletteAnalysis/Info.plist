@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>LSApplicationCategoryType </key>
-	<string>public.app-category.utilities</string>
+	<string></string>
 	<key>NSRequiresAquaSystemAppearance</key>
 	<true/>
 </dict>
