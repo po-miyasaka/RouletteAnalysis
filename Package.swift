@@ -27,8 +27,7 @@ let package = Package(
                 "UserDefaultsClient",
                 "Tutorial",
                 "Request",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture") // name is also impotant
-            
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ]),
         .target(
           name: "Item"
@@ -43,7 +42,11 @@ let package = Package(
         ),
         .target(
           name: "Request",
-          dependencies: ["Utility"]
+          dependencies: [
+            "Utility",
+            .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+            
+          ]
         ),
         .target(
           name: "UserDefaultsClient",
