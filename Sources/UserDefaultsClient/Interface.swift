@@ -63,8 +63,8 @@ public struct UserDefaultsClient {
     }
 }
 
-let omomiWidthForPredictionKey = "omomiWidthForPredictionKey"
-let omomiWidthForHistoryKey = "omomiWidthForHistoryKey"
-let ruleKey = "ruleKey"
-let defaultDisplayedHistoryLimitKey = "defaultDisplayedHistoryLimitKey"
-let didFirstLaunchKey = "didFirstLaunchKey"
+public let omomiWidthForPredictionKey = "omomiWidthForPredictionKey"
+public let omomiWidthForHistoryKey = "omomiWidthForHistoryKey"
+public let ruleKey = "ruleKey"
+public let defaultDisplayedHistoryLimitKey = "defaultDisplayedHistoryLimitKey"
+public let didFirstLaunchKey = "didFirstLaunchKey"
