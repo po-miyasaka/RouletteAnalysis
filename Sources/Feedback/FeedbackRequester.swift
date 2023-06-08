@@ -11,7 +11,7 @@ import Foundation
 
 extension String: Error {}
 public struct FeedbackRequester {
-    var send: FeedbackData async -> Result<Void, String>
+    var send: (FeedbackData) async -> Result<Void, String>
 }
 
 extension DependencyValues {

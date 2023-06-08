@@ -15,7 +15,7 @@ import XCTest
 
 @MainActor
 final class RouletteAnalysisTests: XCTestCase {
-    func testSubmit_fuccess() async {
+    func testSubmit_success() async {
         let store = TestStore(
             initialState: .init(),
             reducer: FeedbackFeature.init,
@@ -27,11 +27,15 @@ final class RouletteAnalysisTests: XCTestCase {
         )
 
         await store.send(.submit)
-        await store.receive(/FeedbackFeature.Action.connecting)
+        await store.receive(/FeedbackFeature.Action.connecting) {
+            $0.isConnecting = true
+        }
         await store.receive(/FeedbackFeature.Action.setAlertMessage("Thanks for your feedback!")) {
             $0.alertMessage = "Thanks for your feedback!"
         }
-        await store.receive(/FeedbackFeature.Action.finishConnecting)
+        await store.receive(/FeedbackFeature.Action.finishConnecting) {
+            $0.isConnecting = false
+        }
     }
 
     func testSubmit_failure() async {
@@ -46,10 +50,14 @@ final class RouletteAnalysisTests: XCTestCase {
         )
 
         await store.send(.submit)
-        await store.receive(/FeedbackFeature.Action.connecting)
+        await store.receive(/FeedbackFeature.Action.connecting) {
+            $0.isConnecting = true
+        }
         await store.receive(/FeedbackFeature.Action.setAlertMessage("Thanks for your feedback!")) {
             $0.alertMessage = "failure"
         }
-        await store.receive(/FeedbackFeature.Action.finishConnecting)
+        await store.receive(/FeedbackFeature.Action.finishConnecting) {
+            $0.isConnecting = false
+        }
     }
 }
