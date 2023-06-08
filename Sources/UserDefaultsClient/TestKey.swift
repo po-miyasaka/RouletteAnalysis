@@ -1,10 +1,9 @@
 import Dependencies
 import Foundation
-//import XCTestDynamicOverlay
 
 extension UserDefaultsClient: TestDependencyKey {
     public static let previewValue = Self.noop
-    
+
     public static let testValue = Self(
         boolForKey: unimplemented("\(Self.self).boolForKey", placeholder: false),
         dataForKey: unimplemented("\(Self.self).dataForKey", placeholder: nil),
@@ -34,21 +33,43 @@ extension UserDefaultsClient {
         setDouble: { _, _ in },
         setInteger: { _, _ in }
     )
-    static var stringDictionary: [String: String] = [:]
+    public static var boolDictionary: [String: Bool] = [:]
     public mutating func override(bool: Bool, forKey key: String) {
-        self.boolForKey = { [self] in $0 == key ? bool : self.boolForKey(key) }
+        Self.boolDictionary[key] = bool
+        boolForKey = {
+            (Self.boolDictionary[$0]) ?? false
+        }
+        setBool = { value, key in Self.boolDictionary[key] = value }
     }
+
+    public static var dataDictionary: [String: Data] = [:]
     public mutating func override(data: Data, forKey key: String) {
-        self.dataForKey = { [self] in $0 == key ? data : self.dataForKey(key) }
+        Self.dataDictionary[key] = data
+        dataForKey = { Self.dataDictionary[$0] }
     }
+
+    public static var stringDictionary: [String: String] = [:]
     public mutating func override(string: String, forKey key: String) {
         Self.stringDictionary[key] = string
-        self.stringForKey = { [self] in $0 == key ? string : Self.stringDictionary[key] ?? self.stringForKey(key) }
+        stringForKey = { Self.stringDictionary[$0] }
     }
+
+    public static var doubleDictionary: [String: Double] = [:]
     public mutating func override(double: Double, forKey key: String) {
-        self.doubleForKey = { [self] in $0 == key ? double : self.doubleForKey(key) }
+        Self.doubleDictionary[key] = double
+        doubleForKey = { Self.doubleDictionary[$0] ?? 0 }
     }
+
+    public static var integerDictionary: [String: Int] = [:]
     public mutating func override(integer: Int, forKey key: String) {
-        self.integerForKey = { [self] in $0 == key ? integer : self.integerForKey(key) }
+        Self.integerDictionary[key] = integer
+        integerForKey = { Self.integerDictionary[$0] ?? 0 }
+    }
+
+    public static func reset() {
+        boolDictionary = [:]
+        stringDictionary = [:]
+        doubleDictionary = [:]
+        integerDictionary = [:]
     }
 }

@@ -1,12 +1,12 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by po_miyasaka on 2023/05/28.
 //
 
-import Foundation
 import ComposableArchitecture
+import Foundation
 import Item
 import UserDefaultsClient
 
@@ -19,30 +19,28 @@ public struct Roulette: ReducerProtocol {
         public var layout: Layout.State = .init() // Layoutに閉じたプロパティしか持っていなくてもここに定義してScopeとして登録しないとReducerとしてはつかえない。
         public var selectedForPrediction: Item?
         public var settings: Settings.State = .init()
-        
+
         public var wheelData: [ItemWithOmomi] {
             makeWheelData(history: history.limitedHistory.map(\.item),
                           omomiWidthForSelecting: settings.omomiWidthForPrediction,
                           omomiWidthForHistory: settings.omomiWidthForHistory,
                           rule: settings.rule,
-                                           selectedItem: selectedForPrediction)
-            
+                          selectedItem: selectedForPrediction)
         }
-        
+
         public var layoutData: [ItemWithOmomi] {
             makeLayoutData(history: history.limitedHistory.map(\.item), omomiWidthForSelecting: settings.omomiWidthForPrediction, omomiWidthForHistory: settings.omomiWidthForHistory, rule: settings.rule, selectedItem: selectedForPrediction)
         }
-        
-        
-        public var activeSheet: ActiveSheet? = nil
+
+        public var activeSheet: ActiveSheet?
         public enum ActiveSheet: String, Equatable, Identifiable {
-            public var id: String { self.rawValue }
+            public var id: String { rawValue }
             case settings
             case tutorial
         }
     }
-    
-    public enum Action {
+
+    public enum Action: Equatable {
         case history(History.Action)
         case layout(Layout.Action)
         case wheel(Wheel.Action)
@@ -52,8 +50,8 @@ public struct Roulette: ReducerProtocol {
         case showTutorial
         case hideSheet
     }
-    
-    public var body: some ReducerProtocol<State, Action>  {
+
+    public var body: some ReducerProtocol<State, Action> {
         Scope(state: \.history, action: /Roulette.Action.history) {
             History()
         }
@@ -61,25 +59,24 @@ public struct Roulette: ReducerProtocol {
         Scope(state: \.layout, action: /Roulette.Action.layout) {
             Layout()
         }
-        
-        Scope(state: \.settings , action: /Roulette.Action.settings) {
+
+        Scope(state: \.settings, action: /Roulette.Action.settings) {
             Settings()
         }
-        
+
         Reduce { state, action in
             switch action {
-            case .wheel(.select(let item)):
+            case let .wheel(.select(item)):
                 state.selectedForPrediction = item
-                
-            case .history(_):
+
+            case .history:
                 break
-            case .layout(.add(let item)):
-                let addedItem: History.HistoryItem = .init(item: item,
-                                                           isHit: state.layoutData.filter { $0.candidated }
+            case let .layout(.add(item)):
+                let isHit = state.layoutData.filter { $0.candidated }
                     .contains(where: { $0.item.number == item.number })
-                )
+
                 return .task {
-                    .history(.add(addedItem))
+                    .history(.add(item, isHit: isHit))
                 }
             case .layout:
                 break
@@ -95,20 +92,16 @@ public struct Roulette: ReducerProtocol {
                     await send(.history(.setup))
                     if !userDefaults.didFirstLaunch {
                         await send(.showTutorial)
-                        
                         await userDefaults.setDidFirstLaunch()
                     }
                 }
             case .showTutorial:
                 state.activeSheet = .tutorial
-                
+
             case .hideSheet:
                 state.activeSheet = nil
             }
             return .none
         }
-        
     }
-    
-    
 }

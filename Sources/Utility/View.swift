@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by po_miyasaka on 2023/06/05.
 //
@@ -8,23 +8,21 @@
 import SwiftUI
 
 public extension View {
-    
     func extend<Content: View>(@ViewBuilder transform: (Self) -> Content) -> some View {
         transform(self)
     }
-    
 }
 
 // これを使うとView構造がわかりづらい。WithCloseButtonを使うのがよい。
 public struct ContainerWithCloseButton: ViewModifier {
-    var  dismissAction: () -> Void
+    var dismissAction: () -> Void
     public init(dismissAction: @escaping () -> Void) {
         self.dismissAction = dismissAction
     }
+
     public func body(content: Content) -> some View {
-        
         VStack {
-            HStack() {
+            HStack {
                 Spacer()
                 Button(action: {
                     dismissAction()
@@ -32,16 +30,16 @@ public struct ContainerWithCloseButton: ViewModifier {
                     Image(systemName: "xmark.circle")
                         .resizable()
                         .frame(
-                        width: 22,
-                        height: 22)
-                    
+                            width: 22,
+                            height: 22
+                        )
+
                 })
-                .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(PlainButtonStyle())
             }
             .padding(.bottom, 8)
             content
         }
-        
     }
 }
 
@@ -52,12 +50,11 @@ public struct WithCloseButton<Content: View>: View {
         self.dismissAction = dismissAction
         self.content = content
     }
-    
+
     @ViewBuilder
     public var body: some View {
-        
         VStack {
-            HStack() {
+            HStack {
                 Spacer()
                 Button(action: {
                     dismissAction()
@@ -65,16 +62,14 @@ public struct WithCloseButton<Content: View>: View {
                     Image(systemName: "xmark.circle")
                         .resizable()
                         .frame(
-                        width: 22,
-                        height: 22)
+                            width: 22,
+                            height: 22
+                        )
                 })
-                .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(PlainButtonStyle())
             }
             .padding(.bottom, 8)
             content()
         }
-        
     }
 }
-
-

@@ -10,12 +10,13 @@ let package = Package(
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "RouletteFeature",
-            targets: ["RouletteFeature"]),
+            targets: ["RouletteFeature"]
+        )
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.53.2"),
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.53.2")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -26,36 +27,47 @@ let package = Package(
                 "Item",
                 "UserDefaultsClient",
                 "Tutorial",
-                "Request",
+                "Feedback",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
-            ]),
-        .target(
-          name: "Item"
-          
+            ]
         ),
         .target(
-          name: "Tutorial",
-          dependencies: ["Utility"]
+            name: "Item"
+
         ),
         .target(
-          name: "Utility"
+            name: "Tutorial",
+            dependencies: ["Utility"]
         ),
         .target(
-          name: "Request",
-          dependencies: [
-            "Utility",
-            .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
-            
-          ]
+            name: "Utility"
         ),
         .target(
-          name: "UserDefaultsClient",
-          dependencies: [
-            .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
-          ]
+            name: "APIClient"
+        ),
+        .target(
+            name: "Feedback",
+            dependencies: [
+                "Utility",
+                "APIClient",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+            ]
+        ),
+        .target(
+            name: "UserDefaultsClient",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+            ]
         ),
         .testTarget(
             name: "RouletteFeatureTests",
-            dependencies: ["RouletteFeature"]),
+            dependencies: ["RouletteFeature",
+                           .product(name: "ComposableArchitecture", package: "swift-composable-architecture")]
+        ),
+        .testTarget(
+            name: "FeedbackTests",
+            dependencies: ["RouletteFeature",
+                           .product(name: "ComposableArchitecture", package: "swift-composable-architecture")]
+        )
     ]
 )
