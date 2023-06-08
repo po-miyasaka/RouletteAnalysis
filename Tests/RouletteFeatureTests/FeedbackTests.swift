@@ -10,11 +10,10 @@ import Foundation
 import ComposableArchitecture
 @testable import Feedback
 import Item
-@testable import UserDefaultsClient
 import XCTest
 
 @MainActor
-final class RouletteAnalysisTests: XCTestCase {
+final class FeedbackTests: XCTestCase {
     func testSubmit_success() async {
         let store = TestStore(
             initialState: .init(),
@@ -30,7 +29,7 @@ final class RouletteAnalysisTests: XCTestCase {
         await store.receive(/FeedbackFeature.Action.connecting) {
             $0.isConnecting = true
         }
-        await store.receive(/FeedbackFeature.Action.setAlertMessage("Thanks for your feedback!")) {
+        await store.receive(/FeedbackFeature.Action.setAlertMessage) {
             $0.alertMessage = "Thanks for your feedback!"
         }
         await store.receive(/FeedbackFeature.Action.finishConnecting) {
@@ -53,7 +52,7 @@ final class RouletteAnalysisTests: XCTestCase {
         await store.receive(/FeedbackFeature.Action.connecting) {
             $0.isConnecting = true
         }
-        await store.receive(/FeedbackFeature.Action.setAlertMessage("Thanks for your feedback!")) {
+        await store.receive(/FeedbackFeature.Action.setAlertMessage) {
             $0.alertMessage = "failure"
         }
         await store.receive(/FeedbackFeature.Action.finishConnecting) {

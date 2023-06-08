@@ -63,11 +63,6 @@ let package = Package(
             name: "RouletteFeatureTests",
             dependencies: ["RouletteFeature",
                            .product(name: "ComposableArchitecture", package: "swift-composable-architecture")]
-        ),
-        .testTarget(
-            name: "FeedbackTests",
-            dependencies: ["RouletteFeature",
-                           .product(name: "ComposableArchitecture", package: "swift-composable-architecture")]
         )
     ]
 )

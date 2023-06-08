@@ -25,7 +25,7 @@ public struct Layout: ReducerProtocol {
         case let .select(item):
             if state.selectedItemForAdding == item {
                 return .task {
-                    return .add(.init(number: item.number, color: item.color))
+                    return .add(item)
                 }
             } else {
                 state.selectedItemForAdding = item
