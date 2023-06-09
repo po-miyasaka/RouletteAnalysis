@@ -42,8 +42,17 @@ public struct UserDefaultsClient {
         return value == 0 ? nil : value
     }
 
-    public func setDefaultDisplayedHistoryLimitKey(_ value: Int) async {
+    public func setDefaultDisplayedHistoryLimit(_ value: Int) async {
         await setInteger(value, defaultDisplayedHistoryLimitKey)
+    }
+    
+    public var screenLayout: String? {
+        let value = stringForKey(screenLayoutKey)
+        return value
+    }
+
+    public func setScreenLayout(_ value: String) async {
+        await setString(value, screenLayoutKey)
     }
 
     public var rule: String? {
@@ -68,3 +77,4 @@ let omomiWidthForHistoryKey = "omomiWidthForHistoryKey"
 let ruleKey = "ruleKey"
 let defaultDisplayedHistoryLimitKey = "defaultDisplayedHistoryLimitKey"
 let didFirstLaunchKey = "didFirstLaunchKey"
+let screenLayoutKey = "screenLayoutKey"

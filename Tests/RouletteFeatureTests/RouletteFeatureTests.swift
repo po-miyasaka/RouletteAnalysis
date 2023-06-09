@@ -77,6 +77,7 @@ extension DependencyValues {
         userDefaults.override(integer: 5, forKey: omomiWidthForHistoryKey)
         userDefaults.override(integer: 7, forKey: omomiWidthForPredictionKey)
         userDefaults.override(string: "the star", forKey: ruleKey)
+        userDefaults.override(string: "tab", forKey: screenLayoutKey)
     }
 
     mutating func finishLaunching() {
@@ -84,5 +85,6 @@ extension DependencyValues {
         userDefaults.override(integer: 5, forKey: omomiWidthForHistoryKey)
         userDefaults.override(integer: 7, forKey: omomiWidthForPredictionKey)
         userDefaults.override(string: "the star", forKey: ruleKey)
+        userDefaults.override(string: "tab", forKey: screenLayoutKey)
     }
 }

@@ -20,13 +20,18 @@ public struct Settings: ReducerProtocol {
         public var omomiWidthForHistory: OmomiWidth = .five
         public var rule: Rule = .theStar
         public var defaultDisplayedHistoryLimit: Int = 16
+        public var screenLayout: ScreenLayout = .tab
+        
+
     }
+
 
     public enum Action: Equatable {
         case changeRule(Rule)
         case changeOmomiForPrediction(OmomiWidth)
         case changeOmomiForHistory(OmomiWidth)
         case changeDefaultDisplayedHistoryLimit(Int)
+        case changeScreenLayout(ScreenLayout)
         case setup
     }
 
@@ -47,19 +52,30 @@ public struct Settings: ReducerProtocol {
             return .fireAndForget {
                 await userDefaults.setOmoiWidthForHistory(omomiForHistory.rawValue)
             }
+        case let .changeDefaultDisplayedHistoryLimit(value):
+            state.defaultDisplayedHistoryLimit = value
+            return .fireAndForget {
+                await userDefaults.setDefaultDisplayedHistoryLimit(value)
+            }
+        case .changeScreenLayout(let value):
+            state.screenLayout = value
+            return .fireAndForget {
+                await userDefaults.setScreenLayout(value.rawValue)
+            }
         case .setup:
             state.rule = userDefaults.rule.flatMap(Rule.init(rawValue:)) ?? .theStar
             state.omomiWidthForPrediction = userDefaults.omomiWidthForPrediction.flatMap(OmomiWidth.init(rawValue:)) ?? .seven
             state.omomiWidthForHistory = userDefaults.omomiWidthForHistory.flatMap(OmomiWidth.init(rawValue:)) ?? .five
 
             state.defaultDisplayedHistoryLimit = userDefaults.defaultDisplayedHistoryLimit ?? 16
+            state.screenLayout = userDefaults.screenLayout.flatMap(ScreenLayout.init(rawValue: )) ?? .tab
             return .none
-        case let .changeDefaultDisplayedHistoryLimit(value):
-            state.defaultDisplayedHistoryLimit = value
-            return .fireAndForget {
-                await userDefaults.setDefaultDisplayedHistoryLimitKey(value)
-            }
         }
+    }
+    
+    public enum ScreenLayout: String, CaseIterable {
+        case tab
+        case vertical
     }
 }
 
@@ -150,6 +166,14 @@ struct SettingsView: View {
                         Text("\(displayedLimit)")
                     }
                 }
+                #if os(macOS)
+                #else
+                Picker("Screen Layout", selection: settingsViewStore.binding(get: \.screenLayout, send: Settings.Action.changeScreenLayout)) {
+                    ForEach(Settings.ScreenLayout.allCases, id: \.self) { screenLayout in
+                        Text("\(screenLayout.rawValue)")
+                    }
+                }
+                #endif
             }
             feedbackSection()
 

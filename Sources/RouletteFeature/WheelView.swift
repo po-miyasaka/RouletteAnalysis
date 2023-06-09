@@ -8,6 +8,7 @@
 import ComposableArchitecture
 import Item
 import SwiftUI
+
 public struct Wheel: ReducerProtocol {
     public struct State {}
 
@@ -87,7 +88,6 @@ public struct WheelView: View {
                             startAngle: Angle(degrees: Double(-90 - (tick / 2))),
                             endAngle: Angle(degrees: Double(-90 - (tick / 2) + tick)), // 0 is the most right
                             clockwise: false) // 時計回りかどうか なんか逆じゃね？
-                //                    path.addLines([CGPoint(x: width / 2, y: width / 2)])
                 path.closeSubpath()
             }.offset(y: width / 2)
                 .stroke(lineWidth: 4)
@@ -102,8 +102,7 @@ public struct WheelView: View {
                             radius: width / 1.8, // 半径
                             startAngle: Angle(degrees: Double(-90 - (tick / 2))),
                             endAngle: Angle(degrees: Double(-90 - (tick / 2) + tick)), // 0 is the most right
-                            clockwise: false) // 時計回りかどうか なんか逆じゃね？
-                //                    path.addLines([CGPoint(x: width / 2, y: width / 2)])
+                            clockwise: false)
                 path.closeSubpath()
             }.offset(y: width / 2)
                 .stroke(lineWidth: 4)
@@ -115,10 +114,10 @@ public struct WheelView: View {
 
             path.addLines([CGPoint(x: width / 2, y: width / 2)])
             path.addArc(center: CGPoint(x: width / 2, y: width / 2),
-                        radius: width / 2, // 半径
+                        radius: width / 2,
                         startAngle: Angle(degrees: Double(-90 - (tick / 2)) - 0.5),
-                        endAngle: Angle(degrees: Double(-90 - (tick / 2) + tick)), // 0 is the most right
-                        clockwise: false) // 時計回りかどうか なんか逆じゃね？
+                        endAngle: Angle(degrees: Double(-90 - (tick / 2) + tick)),
+                        clockwise: false)
             path.addLines([CGPoint(x: width / 2, y: width / 2)])
             path.closeSubpath()
         }.offset(y: width / 2)
@@ -136,10 +135,10 @@ public struct WheelView: View {
 
             path.addLines([CGPoint(x: width / 2, y: width / 2)])
             path.addArc(center: CGPoint(x: width / 2, y: width / 2),
-                        radius: width / 2, // 半径
+                        radius: width / 2,
                         startAngle: Angle(degrees: Double(-90 - (tick / 2))),
-                        endAngle: Angle(degrees: Double(-90 - (tick / 2) + tick) + 0.2), // 0 is the most right
-                        clockwise: false) // 時計回りかどうか なんか逆じゃね？
+                        endAngle: Angle(degrees: Double(-90 - (tick / 2) + tick) + 0.2),
+                        clockwise: false)
             path.addLines([CGPoint(x: width / 2, y: width / 2)])
             path.closeSubpath()
         }.offset(y: width / 2)
@@ -197,7 +196,7 @@ public struct WheelView: View {
                         radius: width / 3, // 半径
                         startAngle: Angle(degrees: Double(0)),
                         endAngle: Angle(degrees: Double(360)), // 0 is the most right
-                        clockwise: true) // 時計回りかどうか なんか逆じゃね？
+                        clockwise: true)
         }
         .offset(y: width / 2)
         .stroke(lineWidth: 1)
@@ -214,7 +213,7 @@ public struct WheelView: View {
                         radius: width / 3, // 半径
                         startAngle: Angle(degrees: Double(0)),
                         endAngle: Angle(degrees: Double(360)), // 0 is the most right
-                        clockwise: true) // 時計回りかどうか なんか逆じゃね？
+                        clockwise: true)
         }
         .offset(y: width / 2)
         .fill()
