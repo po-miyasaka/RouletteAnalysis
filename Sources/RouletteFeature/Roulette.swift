@@ -16,6 +16,7 @@ public struct Roulette: ReducerProtocol {
     public struct State: Equatable {
         public init() {}
         public var history: History.State = .init()
+        public var wheel: Wheel.State = .init()
         public var layout: Layout.State = .init() // Layoutに閉じたプロパティしか持っていなくてもここに定義してScopeとして登録しないとReducerとしてはつかえない。
         public var selectedForPrediction: Item?
         public var settings: Settings.State = .init()
@@ -59,6 +60,10 @@ public struct Roulette: ReducerProtocol {
         Scope(state: \.layout, action: /Roulette.Action.layout) {
             Layout()
         }
+        
+        Scope(state: \.wheel, action: /Roulette.Action.wheel) {
+            Wheel()
+        }
 
         Scope(state: \.settings, action: /Roulette.Action.settings) {
             Settings()
@@ -68,7 +73,8 @@ public struct Roulette: ReducerProtocol {
             switch action {
             case let .wheel(.select(item)):
                 state.selectedForPrediction = item
-
+            case .wheel:
+                break
             case .history:
                 break
             case let .layout(.add(item)):

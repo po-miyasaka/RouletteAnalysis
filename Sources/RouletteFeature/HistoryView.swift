@@ -13,9 +13,23 @@ import UserDefaultsClient
 public struct History: ReducerProtocol {
     @Dependency(\.userDefaults) var userDefaults: UserDefaultsClient
     @Dependency(\.uuid) var uuid
-    public struct HistoryItem: Equatable {
-        public var item: Item
-        public var isHit: Bool
+
+    public struct State: Equatable {
+        var items: [HistoryItem] = []
+        var displayLimit: Double = 16
+
+        var limitedHistory: [HistoryItem] {
+            let count = items.count
+            let start = count - Int(displayLimit) > 0 ? count - Int(displayLimit) : 0
+            return Array(items[start ..< count])
+        }
+    }
+
+    public enum Action: Equatable {
+        case change(Double)
+        case add(Item, isHit: Bool)
+        case removeLast
+        case setup
     }
 
     public func reduce(into state: inout State, action: Action) -> ComposableArchitecture.EffectTask<Action> {
@@ -34,23 +48,10 @@ public struct History: ReducerProtocol {
         }
         return .none
     }
-
-    public struct State: Equatable {
-        var items: [HistoryItem] = []
-        var displayLimit: Double = 16
-
-        var limitedHistory: [HistoryItem] {
-            let count = items.count
-            let start = count - Int(displayLimit) > 0 ? count - Int(displayLimit) : 0
-            return Array(items[start ..< count])
-        }
-    }
-
-    public enum Action: Equatable {
-        case change(Double)
-        case add(Item, isHit: Bool)
-        case removeLast
-        case setup
+    
+    public struct HistoryItem: Equatable {
+        public var item: Item
+        public var isHit: Bool
     }
 }
 

@@ -112,10 +112,11 @@ public struct HomeView: View {
         
         let wheelStore = store.scope(state: {
             WheelView.ViewState(
-                rule: $0.settings.rule,
                 calucuratedData: $0.wheelData,
                 selectedItem: $0.selectedForPrediction,
-                lastItem: viewStore.history.limitedHistory.last?.item
+                lastItem: viewStore.history.limitedHistory.last?.item,
+                mode: viewStore.wheel.mode,
+                omomiWidthForPrediction: $0.settings.omomiWidthForPrediction
             )
         }, action: { Roulette.Action.wheel($0) })
         

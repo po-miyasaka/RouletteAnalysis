@@ -378,64 +378,93 @@ private func calcurate(history: [Item], omomiWidth: OmomiWidth, rule: Rule, sele
 }
 
 private func weighting(item: Item, omomiWidth: OmomiWidth, rule: Rule, selectedItem _: Item?) -> [ItemWithOmomi] {
-    var result: [ItemWithOmomi] = []
     let wheel = rule.wheel
 
     let i = wheel.firstIndex(where: { item.number.str == $0.number.str })!
-    let lastIndex = wheel.endIndex - 1
 
-    (0 ... omomiWidth.offset).forEach { rawIndex in
-        var index = rawIndex
-        var overNum = lastIndex - (i + index)
-        if overNum < 0 {
-            index = abs(overNum) - 1
-        } else {
-            index = i + index
-        }
-        result += [.init(item: wheel[index], omomi: omomiWidth.omomiFar(from: rawIndex))]
-
-        if rawIndex == 0 { return }
-
-        index = rawIndex
-        overNum = 0 + (i - index)
-        if overNum < 0 {
-            index = lastIndex - (abs(overNum) - 1)
-        } else {
-            index = i - index
-        }
-        result += [.init(item: wheel[index], omomi: omomiWidth.omomiFar(from: rawIndex))]
+    return wheel.archSlice(offset: omomiWidth.offset, centerIndex: i) { item, offsetIndex -> ItemWithOmomi in
+            .init(item: item, omomi: omomiWidth.omomiFar(from: offsetIndex))
     }
-    return result
 }
 
 private func candidate(omomiWidth: OmomiWidth, rule: Rule, selectedItem: Item?) -> [Item] {
     guard let selectedItem else { return [] }
-    var result: [Item] = []
     let wheel = rule.wheel
 
     let i = wheel.firstIndex(where: { selectedItem.number.str == $0.number.str })!
-    let lastIndex = wheel.endIndex - 1
+    return wheel.archSlice(offset: omomiWidth.offset, centerIndex: i) {item, index in item}
+}
 
-    (0 ... omomiWidth.offset).forEach { rawIndex in
-        var index = rawIndex
-        var overNum = lastIndex - (i + index)
-        if overNum < 0 {
-            index = abs(overNum) - 1
-        } else {
-            index = i + index
+public extension Array where Element == ItemWithOmomi {
+   
+    func searchFor(width: OmomiWidth, searchType: SearchType) -> ItemWithOmomi {
+        let item: ItemWithOmomi?
+        switch searchType {
+        case .deepeset:
+            item = self.max { lhs, rhs in
+                lhs.omomi < rhs.omomi
+            }
+        case .lightest:
+            item = self.min { lhs, rhs in
+                lhs.omomi < rhs.omomi
+            }
         }
-        result += [wheel[index]]
 
-        if rawIndex == 0 { return }
+        guard let item else { return self[0] }
 
-        index = rawIndex
-        overNum = 0 + (i - index)
-        if overNum < 0 {
-            index = lastIndex - (abs(overNum) - 1)
-        } else {
-            index = i - index
+        let indices: [Int] = zip(0..<self.count, self).compactMap { index, element in
+            return element.omomi == item.omomi ? index : nil
         }
-        result += [wheel[index]]
+        
+        let areaItemsArray: [(index: Int, items: [ItemWithOmomi])] = indices.map { i in
+            (index: i, items: self.archSlice(offset: width.offset, centerIndex: i){ item, _ in item })
+        }
+
+        
+        switch searchType {
+        case .deepeset:
+            let index = areaItemsArray.max(by: { $0.items.reduce(0) { $0 + $1.omomi } < $1.items.reduce(0) { $0 + $1.omomi } })?.index ?? 0
+            return self[index]
+        case .lightest:
+            let index = areaItemsArray.min(by: { $0.items.reduce(0) { $0 + $1.omomi } < $1.items.reduce(0) { $0 + $1.omomi } })?.index ?? 0
+            return self[index]
+        }
+        
+
     }
-    return result
+}
+
+public extension Array {
+    
+    func archSlice<T>(offset: Int, centerIndex: Int, transform: (Element, Int)  -> T) -> [T] {
+        let lastIndex = self.endIndex - 1
+        var archItems: [T] = []
+        (0 ... offset).forEach { rawIndex in
+            var index = rawIndex
+            var overNum = lastIndex - (centerIndex + index)
+            if overNum < 0 {
+                index = abs(overNum) - 1
+            } else {
+                index = centerIndex + index
+            }
+            archItems += [transform(self[index], rawIndex)]
+            
+            if rawIndex == 0 { return }
+            
+            index = rawIndex
+            overNum = 0 + (centerIndex - index)
+            if overNum < 0 {
+                index = lastIndex - (abs(overNum) - 1)
+            } else {
+                index = centerIndex - index
+            }
+            archItems += [transform(self[index], rawIndex)]
+        }
+        return archItems
+    }
+}
+
+public enum SearchType {
+    case deepeset
+    case lightest
 }
