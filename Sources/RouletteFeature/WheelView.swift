@@ -13,13 +13,13 @@ public struct Wheel: ReducerProtocol {
     public struct State: Equatable {
         var mode: Mode = .deepest
     }
-    
+
     public enum Action: Equatable {
         case select(Item)
         case selectWithTap(Item)
         case change(Mode)
     }
-    
+
     public func reduce(into state: inout State, action: Action) -> ComposableArchitecture.EffectTask<Action> {
         switch action {
         case .change(let mode):
@@ -31,18 +31,17 @@ public struct Wheel: ReducerProtocol {
                 await send(.change(.selectByYourself))
                 await send(.select(item))
             }
-            
+
         }
-        
-        
+
         return .none
     }
-    
+
     public enum Mode: String, CaseIterable {
         case deepest = "Deepest"
         case lightest = "Lightest"
         case selectByYourself = "Select by yourself"
-        
+
         var searchType: SearchType? {
             switch self {
             case.deepest:
@@ -64,7 +63,7 @@ public struct WheelView: View {
         var lastItem: Item?
         var mode: Wheel.Mode
         var omomiWidthForPrediction: OmomiWidth
-        
+
         public init(calucuratedData: [ItemWithOmomi], selectedItem: Item?, lastItem: Item?, mode: Wheel.Mode, omomiWidthForPrediction: OmomiWidth) {
             self.calucuratedData = calucuratedData
             self.selectedItem = selectedItem
@@ -72,25 +71,24 @@ public struct WheelView: View {
             self.mode = mode
             self.omomiWidthForPrediction = omomiWidthForPrediction
         }
-        
 
         var angles: [ItemWithOmomiAndAngle] {
             let minAngle = Angle(degrees: -90)
             let maxAngle = Angle(degrees: 270)
             let tickDegrees = (maxAngle.degrees - minAngle.degrees) / Double(calucuratedData.count)
             var result = [ItemWithOmomiAndAngle]()
-            
+
             for tick in 0 ..< calucuratedData.count {
                 let data = calucuratedData[tick]
                 let angle = Angle(degrees: Double(tick) * tickDegrees)
                 //            print(angle.degrees)
                 result.append((data, angle))
             }
-            
+
             return result
         }
     }
-    
+
     @ObservedObject var viewStore: ViewStore<ViewState, Wheel.Action>
 
     let width: Double = 290
@@ -98,26 +96,23 @@ public struct WheelView: View {
         viewStore = ViewStore(store)
     }
     public var body: some View {
-        
-            
-        let item = viewStore.mode.searchType.flatMap({ viewStore.calucuratedData.searchFor(width:  viewStore.omomiWidthForPrediction, searchType: $0)})
-           
+
+        let item = viewStore.mode.searchType.flatMap({ viewStore.calucuratedData.searchFor(width: viewStore.omomiWidthForPrediction, searchType: $0)})
+
         Group {
             VStack(alignment: .center, spacing: 24) {
                 ZStack(alignment: .center) {
-                    
+
                     let tick = (Double(360) / Double(viewStore.angles.count))
                     ForEach(Array(viewStore.angles.enumerated()), id: \.element.itemWithOmomi.item.number) { _, data in
                         rouletteNumbers(tick: tick, data: data)
                     }
-                    
+
                     centerCircle()
-                    
-                    
+
                 }.frame(width: width, height: width)
                     .offset(y: -(width / 2))
-                
-                
+
                 Picker("Mode", selection: viewStore.binding(get: \.mode, send: {
                     Wheel.Action.change($0) })) {
                         ForEach(Wheel.Mode.allCases, id: \.self) {
@@ -125,9 +120,7 @@ public struct WheelView: View {
                         }
                     }
             }
-            
-            
-            
+
         }
         .onChange(of: item, perform: { newValue in
             // TCA doesn't allow knowing changes of states and sending action after a state changed, so doing it here.
@@ -136,12 +129,12 @@ public struct WheelView: View {
             }
         })
     }
-    
+
     @ViewBuilder
     func rouletteNumbers(tick: Double, data: ItemWithOmomiAndAngle) -> some View {
         if data.itemWithOmomi.candidated {
             Path { path in
-                
+
                 //                    path.addLines([CGPoint(x: width / 2, y: width / 2)])
                 path.addArc(center: CGPoint(x: width / 2, y: width / 2),
                             radius: width / 1.9, // 半径
@@ -156,7 +149,7 @@ public struct WheelView: View {
         }
         if data.itemWithOmomi.item.number == viewStore.lastItem?.number {
             Path { path in
-                
+
                 //                    path.addLines([CGPoint(x: width / 2, y: width / 2)])
                 path.addArc(center: CGPoint(x: width / 2, y: width / 2),
                             radius: width / 1.8, // 半径
@@ -169,9 +162,9 @@ public struct WheelView: View {
                 .foregroundColor(.yellow)
                 .rotationEffect(data.angle - Angle(degrees: Double(0.5)), anchor: UnitPoint(x: 0.5, y: 1))
         }
-        
+
         Path { path in
-            
+
             path.addLines([CGPoint(x: width / 2, y: width / 2)])
             path.addArc(center: CGPoint(x: width / 2, y: width / 2),
                         radius: width / 2,
@@ -184,15 +177,15 @@ public struct WheelView: View {
             .fill()
             .foregroundColor(data.itemWithOmomi.item.color.value)
             .opacity(Double(data.itemWithOmomi.omomi) / 100.0 + 0.01)
-        
+
             .rotationEffect(data.angle - Angle(degrees: Double(0.5)), anchor: UnitPoint(x: 0.5, y: 1))
             .onTapGesture {
                 print(data.itemWithOmomi.item.number.str)
                 viewStore.send(.selectWithTap(data.itemWithOmomi.item))
             }
-        
+
         Path { path in
-            
+
             path.addLines([CGPoint(x: width / 2, y: width / 2)])
             path.addArc(center: CGPoint(x: width / 2, y: width / 2),
                         radius: width / 2,
@@ -215,7 +208,7 @@ public struct WheelView: View {
                 print(data.itemWithOmomi.item.number.str)
                 viewStore.send(.select(data.itemWithOmomi.item))
             }
-        
+
         VStack(alignment: .center) {
             Text(
                 data.itemWithOmomi.item.number.str)
@@ -228,7 +221,7 @@ public struct WheelView: View {
             .offset(y: (width / 2) - 6)
         }
     }
-    
+
     @ViewBuilder
     func outsideCircle() -> some View {
         Path { path in
@@ -248,7 +241,7 @@ public struct WheelView: View {
 #endif
         }
     }
-    
+
     @ViewBuilder
     func centerCircle() -> some View {
         Path { path in
@@ -267,7 +260,7 @@ public struct WheelView: View {
             $0.foregroundColor(Color(uiColor: .separator))
 #endif
         }
-        
+
         Path { path in
             path.addArc(center: CGPoint(x: width / 2, y: width / 2),
                         radius: width / 3, // 半径

@@ -60,7 +60,7 @@ public struct Roulette: ReducerProtocol {
         Scope(state: \.layout, action: /Roulette.Action.layout) {
             Layout()
         }
-        
+
         Scope(state: \.wheel, action: /Roulette.Action.wheel) {
             Wheel()
         }

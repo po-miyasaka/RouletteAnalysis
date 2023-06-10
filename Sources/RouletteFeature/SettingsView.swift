@@ -21,10 +21,8 @@ public struct Settings: ReducerProtocol {
         public var rule: Rule = .theStar
         public var defaultDisplayedHistoryLimit: Int = 16
         public var screenLayout: ScreenLayout = .tab
-        
 
     }
-
 
     public enum Action: Equatable {
         case changeRule(Rule)
@@ -72,7 +70,7 @@ public struct Settings: ReducerProtocol {
             return .none
         }
     }
-    
+
     public enum ScreenLayout: String, CaseIterable {
         case tab
         case vertical

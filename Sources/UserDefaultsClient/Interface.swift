@@ -45,7 +45,7 @@ public struct UserDefaultsClient {
     public func setDefaultDisplayedHistoryLimit(_ value: Int) async {
         await setInteger(value, defaultDisplayedHistoryLimitKey)
     }
-    
+
     public var screenLayout: String? {
         let value = stringForKey(screenLayoutKey)
         return value

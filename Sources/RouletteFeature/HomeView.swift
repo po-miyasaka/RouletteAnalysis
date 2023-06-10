@@ -14,22 +14,22 @@ import Utility
 public struct HomeView: View {
     let store: Store<Roulette.State, Roulette.Action>
     @ObservedObject var viewStore: ViewStore<Roulette.State, Roulette.Action>
-    
+
     public init(store: Store<Roulette.State, Roulette.Action>) {
         self.store = store
         viewStore = ViewStore(store)
     }
-    
+
     @ViewBuilder
     public var body: some View {
-        
+
         Group {
 #if os(macOS)
             ScrollView {
                 mainContents
             }
 #else
-            
+
             if viewStore.settings.screenLayout == .tab {
                 TabView {
                     mainContents
@@ -40,10 +40,10 @@ public struct HomeView: View {
                     mainContents
                 }
             }
-            
+
 #endif
         }
-        
+
         .sheet(
             item: viewStore.binding(get: \.activeSheet, send: { _ in
                 Roulette.Action.hideSheet
@@ -63,7 +63,7 @@ public struct HomeView: View {
                 TutorialView()
             }
         }
-        
+
         .onAppear {
             viewStore.send(.launch)
         }
@@ -94,7 +94,7 @@ public struct HomeView: View {
                     Image(systemName: "gear")
                 }
             })
-            
+
             ToolbarItem(placement: .navigation, content: {
                 Button {
                     if !viewStore.history.items.isEmpty {
@@ -106,10 +106,10 @@ public struct HomeView: View {
             })
         }
     }
-    
+
     @ViewBuilder
     var mainContents: some View {
-        
+
         let wheelStore = store.scope(state: {
             WheelView.ViewState(
                 calucuratedData: $0.wheelData,
@@ -119,7 +119,7 @@ public struct HomeView: View {
                 omomiWidthForPrediction: $0.settings.omomiWidthForPrediction
             )
         }, action: { Roulette.Action.wheel($0) })
-        
+
         let layoutStore = store.scope(state: {
             LayoutView.ViewState(
                 rule: $0.settings.rule,
@@ -130,7 +130,7 @@ public struct HomeView: View {
         }, action: { Roulette.Action.layout($0) })
         LayoutView(store: layoutStore).padding(.bottom, 44).padding(8)
         WheelView(store: wheelStore).frame(width: 330)
-        
+
     }
 }
 

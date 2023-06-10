@@ -48,7 +48,7 @@ public struct History: ReducerProtocol {
         }
         return .none
     }
-    
+
     public struct HistoryItem: Equatable {
         public var item: Item
         public var isHit: Bool

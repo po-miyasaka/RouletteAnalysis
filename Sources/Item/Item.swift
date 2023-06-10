@@ -392,11 +392,11 @@ private func candidate(omomiWidth: OmomiWidth, rule: Rule, selectedItem: Item?) 
     let wheel = rule.wheel
 
     let i = wheel.firstIndex(where: { selectedItem.number.str == $0.number.str })!
-    return wheel.archSlice(offset: omomiWidth.offset, centerIndex: i) {item, index in item}
+    return wheel.archSlice(offset: omomiWidth.offset, centerIndex: i) {item, _ in item}
 }
 
 public extension Array where Element == ItemWithOmomi {
-   
+
     func searchFor(width: OmomiWidth, searchType: SearchType) -> ItemWithOmomi {
         let item: ItemWithOmomi?
         switch searchType {
@@ -415,12 +415,11 @@ public extension Array where Element == ItemWithOmomi {
         let indices: [Int] = zip(0..<self.count, self).compactMap { index, element in
             return element.omomi == item.omomi ? index : nil
         }
-        
+
         let areaItemsArray: [(index: Int, items: [ItemWithOmomi])] = indices.map { i in
-            (index: i, items: self.archSlice(offset: width.offset, centerIndex: i){ item, _ in item })
+            (index: i, items: self.archSlice(offset: width.offset, centerIndex: i) { item, _ in item })
         }
 
-        
         switch searchType {
         case .deepeset:
             let index = areaItemsArray.max(by: { $0.items.reduce(0) { $0 + $1.omomi } < $1.items.reduce(0) { $0 + $1.omomi } })?.index ?? 0
@@ -429,14 +428,13 @@ public extension Array where Element == ItemWithOmomi {
             let index = areaItemsArray.min(by: { $0.items.reduce(0) { $0 + $1.omomi } < $1.items.reduce(0) { $0 + $1.omomi } })?.index ?? 0
             return self[index]
         }
-        
 
     }
 }
 
 public extension Array {
-    
-    func archSlice<T>(offset: Int, centerIndex: Int, transform: (Element, Int)  -> T) -> [T] {
+
+    func archSlice<T>(offset: Int, centerIndex: Int, transform: (Element, Int) -> T) -> [T] {
         let lastIndex = self.endIndex - 1
         var archItems: [T] = []
         (0 ... offset).forEach { rawIndex in
@@ -448,9 +446,9 @@ public extension Array {
                 index = centerIndex + index
             }
             archItems += [transform(self[index], rawIndex)]
-            
+
             if rawIndex == 0 { return }
-            
+
             index = rawIndex
             overNum = 0 + (centerIndex - index)
             if overNum < 0 {
