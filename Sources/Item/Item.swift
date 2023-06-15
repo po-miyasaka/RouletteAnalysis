@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct Item: Identifiable, Equatable {
+public struct Item: Identifiable, Equatable, Codable {
     public var id: UUID
     public let number: Number
     public let color: Color
@@ -23,7 +23,7 @@ public struct Item: Identifiable, Equatable {
         return item
     }
 
-    public enum Color {
+    public enum Color: Codable {
         case red
         case black
         case green
@@ -39,7 +39,7 @@ public struct Item: Identifiable, Equatable {
         }
     }
 
-    public enum Number: Int, CaseIterable {
+    public enum Number: Int, CaseIterable, Codable {
         case n0 = 0
         case n1
         case n2
@@ -95,7 +95,7 @@ public struct Item: Identifiable, Equatable {
     }
 }
 
-public struct ItemWithOmomi: Equatable {
+public struct ItemWithOmomi: Equatable, Codable {
     public var item: Item
     public var omomi: Int
     public var candidated: Bool = false
@@ -255,7 +255,7 @@ public enum Rule: String, CaseIterable {
         .init(number: .n23, color: .red),
         .init(number: .n35, color: .black),
         .init(number: .n14, color: .red),
-        .init(number: .n2, color: .black)
+        .init(number: .n2, color: .black),
     ]
 
     static var americanLayout: [Item] {
@@ -310,7 +310,7 @@ public enum Rule: String, CaseIterable {
         .init(number: .n12, color: .red),
         .init(number: .n35, color: .black),
         .init(number: .n3, color: .red),
-        .init(number: .n26, color: .black)
+        .init(number: .n26, color: .black),
     ]
 
     static var europeanLayout: [Item] {
@@ -383,7 +383,7 @@ private func weighting(item: Item, omomiWidth: OmomiWidth, rule: Rule, selectedI
     let i = wheel.firstIndex(where: { item.number.str == $0.number.str })!
 
     return wheel.archSlice(offset: omomiWidth.offset, centerIndex: i) { item, offsetIndex -> ItemWithOmomi in
-            .init(item: item, omomi: omomiWidth.omomiFar(from: offsetIndex))
+        .init(item: item, omomi: omomiWidth.omomiFar(from: offsetIndex))
     }
 }
 
@@ -392,28 +392,27 @@ private func candidate(omomiWidth: OmomiWidth, rule: Rule, selectedItem: Item?) 
     let wheel = rule.wheel
 
     let i = wheel.firstIndex(where: { selectedItem.number.str == $0.number.str })!
-    return wheel.archSlice(offset: omomiWidth.offset, centerIndex: i) {item, _ in item}
+    return wheel.archSlice(offset: omomiWidth.offset, centerIndex: i) { item, _ in item }
 }
 
 public extension Array where Element == ItemWithOmomi {
-
     func searchFor(width: OmomiWidth, searchType: SearchType) -> ItemWithOmomi {
         let item: ItemWithOmomi?
         switch searchType {
         case .deepeset:
-            item = self.max { lhs, rhs in
+            item = max { lhs, rhs in
                 lhs.omomi < rhs.omomi
             }
         case .lightest:
-            item = self.min { lhs, rhs in
+            item = min { lhs, rhs in
                 lhs.omomi < rhs.omomi
             }
         }
 
         guard let item else { return self[0] }
 
-        let indices: [Int] = zip(0..<self.count, self).compactMap { index, element in
-            return element.omomi == item.omomi ? index : nil
+        let indices: [Int] = zip(0 ..< count, self).compactMap { index, element in
+            element.omomi == item.omomi ? index : nil
         }
 
         let areaItemsArray: [(index: Int, items: [ItemWithOmomi])] = indices.map { i in
@@ -428,14 +427,12 @@ public extension Array where Element == ItemWithOmomi {
             let index = areaItemsArray.min(by: { $0.items.reduce(0) { $0 + $1.omomi } < $1.items.reduce(0) { $0 + $1.omomi } })?.index ?? 0
             return self[index]
         }
-
     }
 }
 
 public extension Array {
-
     func archSlice<T>(offset: Int, centerIndex: Int, transform: (Element, Int) -> T) -> [T] {
-        let lastIndex = self.endIndex - 1
+        let lastIndex = endIndex - 1
         var archItems: [T] = []
         (0 ... offset).forEach { rawIndex in
             var index = rawIndex

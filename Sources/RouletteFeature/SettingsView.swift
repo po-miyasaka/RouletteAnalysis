@@ -21,20 +21,46 @@ public struct Settings: ReducerProtocol {
         public var rule: Rule = .theStar
         public var defaultDisplayedHistoryLimit: Int = 16
         public var screenLayout: ScreenLayout = .tab
-
+        public var activeAlert: ActiveAlert?
     }
 
     public enum Action: Equatable {
         case changeRule(Rule)
+        case showChangeRuleAlert(Rule)
         case changeOmomiForPrediction(OmomiWidth)
         case changeOmomiForHistory(OmomiWidth)
         case changeDefaultDisplayedHistoryLimit(Int)
         case changeScreenLayout(ScreenLayout)
         case setup
+        case alert(ActiveAlert?)
+    }
+
+    public enum ActiveAlert: Equatable, Identifiable {
+        public var id: String { displayText }
+        case change(Rule)
+
+        var displayText: String {
+            switch self {
+            case .change:
+                return "Changing a rule deletes past data. \n Would you like to change the rule?"
+            }
+        }
+
+        var rule: Rule? {
+            switch self {
+            case let .change(rule):
+                return rule
+            }
+        }
     }
 
     public func reduce(into state: inout State, action: Action) -> ComposableArchitecture.EffectTask<Action> {
         switch action {
+        case let .showChangeRuleAlert(rule):
+
+            return .task {
+                return .alert(.change(rule))
+            }
         case let .changeRule(rule):
             state.rule = rule
             return .fireAndForget {
@@ -55,7 +81,7 @@ public struct Settings: ReducerProtocol {
             return .fireAndForget {
                 await userDefaults.setDefaultDisplayedHistoryLimit(value)
             }
-        case .changeScreenLayout(let value):
+        case let .changeScreenLayout(value):
             state.screenLayout = value
             return .fireAndForget {
                 await userDefaults.setScreenLayout(value.rawValue)
@@ -66,7 +92,10 @@ public struct Settings: ReducerProtocol {
             state.omomiWidthForHistory = userDefaults.omomiWidthForHistory.flatMap(OmomiWidth.init(rawValue:)) ?? .five
 
             state.defaultDisplayedHistoryLimit = userDefaults.defaultDisplayedHistoryLimit ?? 16
-            state.screenLayout = userDefaults.screenLayout.flatMap(ScreenLayout.init(rawValue: )) ?? .tab
+            state.screenLayout = userDefaults.screenLayout.flatMap(ScreenLayout.init(rawValue:)) ?? .tab
+            return .none
+        case let .alert(value):
+            state.activeAlert = value
             return .none
         }
     }
@@ -78,6 +107,8 @@ public struct Settings: ReducerProtocol {
 }
 
 struct SettingsView: View {
+    // 汎用的なSettingにViewのロジックが含まれないようにするために試しに専用のReducerをつくってみた。
+    // BindingなどでStateとActionの型がきまっているために、Reducer同士で連携するのは厳しそう。
     struct ViewReducer: ReducerProtocol {
         struct State: Equatable, Identifiable {
             var id: String { activeSheet?.rawValue ?? "" }
@@ -141,7 +172,7 @@ struct SettingsView: View {
     func form() -> some View {
         Form {
             Section {
-                Picker("Roulette Type", selection: settingsViewStore.binding(get: \.rule, send: Settings.Action.changeRule)) {
+                Picker("Roulette Type", selection: settingsViewStore.binding(get: \.rule, send: Settings.Action.showChangeRuleAlert)) {
                     ForEach(Rule.allCases, id: \.self) { rule in
                         Text(rule.displayName)
                     }
@@ -166,17 +197,44 @@ struct SettingsView: View {
                 }
                 #if os(macOS)
                 #else
-                Picker("Screen Layout", selection: settingsViewStore.binding(get: \.screenLayout, send: Settings.Action.changeScreenLayout)) {
-                    ForEach(Settings.ScreenLayout.allCases, id: \.self) { screenLayout in
-                        Text("\(screenLayout.rawValue)")
+                    Picker("Screen Layout", selection: settingsViewStore.binding(get: \.screenLayout, send: Settings.Action.changeScreenLayout)) {
+                        ForEach(Settings.ScreenLayout.allCases, id: \.self) { screenLayout in
+                            Text("\(screenLayout.rawValue)")
+                        }
                     }
-                }
                 #endif
             }
             feedbackSection()
 
             tutorialSection()
         }
+        .extend {
+#if os(macOS)
+            
+            $0.alert(item: settingsViewStore.binding(get: { $0.activeAlert }, send: { v in Settings.Action.alert(v) }), content: { alert in
+                
+                Alert(title: Text(alert.displayText), primaryButton:
+                    .destructive(Text("Change")) {
+                        if let rule = alert.rule { settingsViewStore.send(.changeRule(rule)) }
+                    },
+                    secondaryButton: .cancel()
+                )
+
+            })
+#else
+            $0.actionSheet(item: settingsViewStore.binding(get: { $0.activeAlert }, send: { v in Settings.Action.alert(v) }), content: { alert in
+                
+                ActionSheet(title: Text(alert.displayText), buttons: [
+                    .destructive(Text("Change")) {
+                        if let rule = alert.rule { settingsViewStore.send(.changeRule(rule)) }
+                    },
+                    .cancel(),
+                ])
+
+            })
+#endif
+        }
+        
     }
 
     @ViewBuilder
@@ -213,21 +271,11 @@ struct SettingsView: View {
             footer: {
                 HStack {
                     Spacer()
-                    Text("Version: \(Bundle.main.releaseVersionNumber ?? "Unknown")")
+                    Text("Version: \(Bundle.main.releaseVersionNumber)")
                     Spacer()
                 }
                 .padding()
             }
         )
-    }
-}
-
-extension Bundle {
-    var releaseVersionNumber: String? {
-        return infoDictionary?["CFBundleShortVersionString"] as? String
-    }
-
-    var buildVersionNumber: String? {
-        return infoDictionary?["CFBundleVersion"] as? String
     }
 }

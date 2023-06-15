@@ -10,7 +10,7 @@ import Item
 import SwiftUI
 
 public struct Wheel: ReducerProtocol {
-    public struct State: Equatable {
+    public struct State: Equatable, Codable {
         var mode: Mode = .deepest
     }
 
@@ -22,29 +22,28 @@ public struct Wheel: ReducerProtocol {
 
     public func reduce(into state: inout State, action: Action) -> ComposableArchitecture.EffectTask<Action> {
         switch action {
-        case .change(let mode):
+        case let .change(mode):
             state.mode = mode
         case .select:
             break
-        case .selectWithTap(let item):
+        case let .selectWithTap(item):
             return .run { send in
                 await send(.change(.selectByYourself))
                 await send(.select(item))
             }
-
         }
 
         return .none
     }
 
-    public enum Mode: String, CaseIterable {
+    public enum Mode: String, CaseIterable, Codable {
         case deepest = "Deepest"
         case lightest = "Lightest"
         case selectByYourself = "Select by yourself"
 
         var searchType: SearchType? {
             switch self {
-            case.deepest:
+            case .deepest:
                 return .deepeset
             case .lightest:
                 return .lightest
@@ -95,14 +94,13 @@ public struct WheelView: View {
     public init(store: Store<ViewState, Wheel.Action>) {
         viewStore = ViewStore(store)
     }
-    public var body: some View {
 
-        let item = viewStore.mode.searchType.flatMap({ viewStore.calucuratedData.searchFor(width: viewStore.omomiWidthForPrediction, searchType: $0)})
+    public var body: some View {
+        let item = viewStore.mode.searchType.flatMap { viewStore.calucuratedData.searchFor(width: viewStore.omomiWidthForPrediction, searchType: $0) }
 
         Group {
             VStack(alignment: .center, spacing: 24) {
                 ZStack(alignment: .center) {
-
                     let tick = (Double(360) / Double(viewStore.angles.count))
                     ForEach(Array(viewStore.angles.enumerated()), id: \.element.itemWithOmomi.item.number) { _, data in
                         rouletteNumbers(tick: tick, data: data)
@@ -114,13 +112,13 @@ public struct WheelView: View {
                     .offset(y: -(width / 2))
 
                 Picker("Mode", selection: viewStore.binding(get: \.mode, send: {
-                    Wheel.Action.change($0) })) {
-                        ForEach(Wheel.Mode.allCases, id: \.self) {
-                            Text($0.rawValue)
-                        }
+                    Wheel.Action.change($0)
+                })) {
+                    ForEach(Wheel.Mode.allCases, id: \.self) {
+                        Text($0.rawValue)
                     }
+                }
             }
-
         }
         .onChange(of: item, perform: { newValue in
             // TCA doesn't allow knowing changes of states and sending action after a state changed, so doing it here.
@@ -197,11 +195,11 @@ public struct WheelView: View {
         }.offset(y: width / 2)
             .stroke(lineWidth: 1)
             .extend {
-#if os(macOS)
-                $0.foregroundColor(Color(nsColor: .separatorColor))
-#else
-                $0.foregroundColor(Color(uiColor: .separator))
-#endif
+                #if os(macOS)
+                    $0.foregroundColor(Color(nsColor: .separatorColor))
+                #else
+                    $0.foregroundColor(Color(uiColor: .separator))
+                #endif
             }
             .rotationEffect(data.angle - Angle(degrees: Double(1)), anchor: UnitPoint(x: 0.5, y: 1))
             .onTapGesture {
@@ -212,13 +210,13 @@ public struct WheelView: View {
         VStack(alignment: .center) {
             Text(
                 data.itemWithOmomi.item.number.str)
-            .frame(alignment: .center)
-            .font(.caption)
-            .foregroundColor(.black)
-            .bold()
-            .offset(y: -(width / 2) + 18)
-            .rotationEffect(Angle(degrees: data.angle.degrees - 1), anchor: UnitPoint(x: 0.5, y: 1))
-            .offset(y: (width / 2) - 6)
+                .frame(alignment: .center)
+                .font(.caption)
+                .foregroundColor(.black)
+                .bold()
+                .offset(y: -(width / 2) + 18)
+                .rotationEffect(Angle(degrees: data.angle.degrees - 1), anchor: UnitPoint(x: 0.5, y: 1))
+                .offset(y: (width / 2) - 6)
         }
     }
 
@@ -234,11 +232,11 @@ public struct WheelView: View {
         .offset(y: width / 2)
         .stroke(lineWidth: 1)
         .extend {
-#if os(macOS)
-            $0.foregroundColor(Color(nsColor: .separatorColor))
-#else
-            $0.foregroundColor(Color(uiColor: .separator))
-#endif
+            #if os(macOS)
+                $0.foregroundColor(Color(nsColor: .separatorColor))
+            #else
+                $0.foregroundColor(Color(uiColor: .separator))
+            #endif
         }
     }
 
@@ -254,11 +252,11 @@ public struct WheelView: View {
         .offset(y: width / 2)
         .stroke(lineWidth: 1)
         .extend {
-#if os(macOS)
-            $0.foregroundColor(Color(nsColor: .separatorColor))
-#else
-            $0.foregroundColor(Color(uiColor: .separator))
-#endif
+            #if os(macOS)
+                $0.foregroundColor(Color(nsColor: .separatorColor))
+            #else
+                $0.foregroundColor(Color(uiColor: .separator))
+            #endif
         }
 
         Path { path in

@@ -14,7 +14,7 @@ public struct History: ReducerProtocol {
     @Dependency(\.userDefaults) var userDefaults: UserDefaultsClient
     @Dependency(\.uuid) var uuid
 
-    public struct State: Equatable {
+    public struct State: Equatable, Codable {
         var items: [HistoryItem] = []
         var displayLimit: Double = 16
 
@@ -22,6 +22,10 @@ public struct History: ReducerProtocol {
             let count = items.count
             let start = count - Int(displayLimit) > 0 ? count - Int(displayLimit) : 0
             return Array(items[start ..< count])
+        }
+
+        var displayName: String {
+            items.prefix(10).reduce("") { "\($0 + $1.item.number.str)" }
         }
     }
 
@@ -49,7 +53,7 @@ public struct History: ReducerProtocol {
         return .none
     }
 
-    public struct HistoryItem: Equatable {
+    public struct HistoryItem: Equatable, Codable {
         public var item: Item
         public var isHit: Bool
     }
@@ -61,9 +65,17 @@ public struct HistoryView: View {
     @ViewBuilder
     public var body: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
+
             VStack(spacing: 0) {
-                ZStack(alignment: .trailing) {
-                    Color.white.opacity(0.1)
+                HStack {
+                    Button {
+                        if !viewStore.items.isEmpty {
+                            viewStore.send(.removeLast)
+                        }
+                    } label: {
+                        Image(systemName: "trash")
+                    }.disabled(viewStore.items.isEmpty)
+
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(alignment: .center, spacing: 4, content: {
                             ForEach(
@@ -85,17 +97,20 @@ public struct HistoryView: View {
                                     .border(data.isHit ? .yellow : .clear, width: 2)
                             }
                         })
-                            .padding(.horizontal, 8)
                     }
                 }
                 .frame(maxHeight: 20)
                 .padding(.top, 8)
+                .padding(.horizontal, 8)
 
                 HStack(alignment: .center, spacing: 8) {
                     Slider(
-                        value: viewStore.binding(get: { $0.displayLimit }, send: { value in
-                            History.Action.change(value)
-                        }),
+                        value: viewStore.binding(
+                            get: { $0.displayLimit },
+                            send: { value in
+                                History.Action.change(value)
+                            }
+                        ),
                         in: 0 ... Double(max(viewStore.items.count, 1)),
                         step: 1
                     )
@@ -103,7 +118,8 @@ public struct HistoryView: View {
                     Text(
                         "\(Int(min(Double(viewStore.items.count), viewStore.displayLimit))) / \(viewStore.items.count)").font(.caption
                     )
-                }.padding(.horizontal, 8)
+
+                }.padding(8)
             }
         }
     }

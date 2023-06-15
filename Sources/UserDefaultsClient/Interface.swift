@@ -70,11 +70,20 @@ public struct UserDefaultsClient {
     public func setDidFirstLaunch() async {
         await setBool(true, didFirstLaunchKey)
     }
+
+    public var roulettes: Data? {
+        dataForKey(roulettesKey)
+    }
+
+    public func setRoulettes(data: Data?) async {
+        await setData(data, roulettesKey)
+    }
 }
 
 let omomiWidthForPredictionKey = "omomiWidthForPredictionKey"
 let omomiWidthForHistoryKey = "omomiWidthForHistoryKey"
 let ruleKey = "ruleKey"
+let roulettesKey = "roulettesKey"
 let defaultDisplayedHistoryLimitKey = "defaultDisplayedHistoryLimitKey"
 let didFirstLaunchKey = "didFirstLaunchKey"
 let screenLayoutKey = "screenLayoutKey"

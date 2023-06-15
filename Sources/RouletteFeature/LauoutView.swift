@@ -11,24 +11,24 @@ import SwiftUI
 import Utility
 
 public struct Layout: ReducerProtocol {
-    public struct State: Equatable {
+    public struct State: Equatable, Codable {
         var selectedItemForAdding: Item?
     }
 
     public enum Action: Equatable {
-        case select(Item)
-        case add(Item)
+        case select(ItemWithOmomi)
+        case add(ItemWithOmomi)
     }
 
     public func reduce(into state: inout State, action: Action) -> ComposableArchitecture.EffectTask<Action> {
         switch action {
         case let .select(item):
-            if state.selectedItemForAdding == item {
+            if state.selectedItemForAdding?.number == item.item.number {
                 return .task {
                     return .add(item)
                 }
             } else {
-                state.selectedItemForAdding = item
+                state.selectedItemForAdding = item.item
             }
         case .add:
             state.selectedItemForAdding = nil
@@ -82,6 +82,7 @@ public struct LayoutView: View {
     func makeLayoutCell(index: Int) -> some View {
         let item = viewStore.predictedData[index]
         LayoutCell(isSelected: viewStore.selectedItem == item.item, data: item) { item in
+
             viewStore.send(.select(item))
         }
         .extend {
@@ -99,7 +100,7 @@ public struct LayoutView: View {
 struct LayoutCell: View {
     let isSelected: Bool
     let data: ItemWithOmomi
-    let tapAction: (Item) -> Void
+    let tapAction: (ItemWithOmomi) -> Void
 
     @ViewBuilder
     var body: some View {
@@ -116,7 +117,7 @@ struct LayoutCell: View {
                 .padding(10)
 
         }.onTapGesture {
-            tapAction(data.item)
+            tapAction(data)
         }.cornerRadius(4)
     }
 }

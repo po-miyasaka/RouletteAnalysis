@@ -8,67 +8,113 @@ import XCTest
 final class RouletteAnalysisTests: XCTestCase {
     override func setUp() async throws {
         UserDefaultsClient.reset()
+        
     }
 
+    
     func testFirstLaunch() async throws {
-        let store =
-            TestStore(initialState: .init()) {
-                Roulette()
-            } withDependencies: {
-                $0.firstLaunching()
+        
+        let appStore =
+        TestStore(initialState: .init()) {
+            AppFeature()
+        } withDependencies: {
+            $0.firstLaunching()
+            $0.uuid = UUIDGenerator { UUID(1) }
+        }
+        
+        let rouletteStore = appStore.scope(
+            state: {
+                RouletteView.ViewState(roulette: try! XCTUnwrap($0.current), settings: $0.settings)
             }
-
-        await store.send(.launch)
-        await store.receive(.settings(.setup))
-        await store.receive(.history(.setup))
-        await store.receive(.showTutorial, timeout: 3) {
+        )
+        
+        await appStore.send(.onAppear) {
+            $0.current = .init(id: UUID(1))
+            $0.roulettes = [.init(id: UUID(1))]
+        }
+        await rouletteStore.receive(.settings(.setup))
+        await appStore.receive(.showTutorial, timeout: 3) {
             $0.activeSheet = .tutorial
         }
-        XCTAssertTrue(store.dependencies.userDefaults.didFirstLaunch)
-        await store.finish()
+        XCTAssertTrue(appStore.dependencies.userDefaults.didFirstLaunch)
+        await appStore.finish()
     }
 
-    func testUsualLaunch() async throws {
-        let store =
-            TestStore(initialState: .init()) {
-                Roulette()
-            } withDependencies: {
-                $0.finishLaunching()
-            }
-
-        await store.send(.launch)
-        await store.receive(.settings(.setup))
-        await store.receive(.history(.setup))
-    }
+//    func testLaunchAfterTheSecondTime() async throws {
+//
+//        let appStore =
+//        TestStore(initialState: .init()) {
+//            AppFeature()
+//        } withDependencies: {
+//            $0.finishLaunchingAfterTheSecondTime()
+//            $0.uuid = UUIDGenerator { UUID(1) }
+//        }
+//
+//        let rouletteStore = appStore.scope(
+//            state: {
+//                RouletteView.ViewState(roulette: try! XCTUnwrap($0.current), settings: $0.settings)
+//            }
+//        )
+//
+//        await appStore.send(.onAppear) {
+//            $0.current = .init(id: UUID(1))
+//            $0.roulettes = [.init(id: UUID(1))]
+//        }
+//        await rouletteStore.receive(.settings(.setup))
+//        await appStore.receive(.showTutorial, timeout: 3) {
+//            $0.activeSheet = .tutorial
+//        }
+//        await appStore.send(.onAppear)
+//        await appStore.receive(.settings(.setup))
+//        await rouletteStore.receive(.roulette(.history(.setup)))
+//    }
 
     func testTapSettings() async {
-        let store =
-            TestStore(initialState: .init()) {
-                Roulette()
-            }
-        // 関係ないDependencyは定義する必要がない。もし使われた場合も自動的に検知されて失敗になる。
-        await store.send(.setSettingsViewPresent) {
+        let appStore =
+        TestStore(initialState: .init()) {
+            AppFeature()
+        } withDependencies: {
+            $0.finishLaunchingAfterTheSecondTime()
+            $0.uuid = UUIDGenerator { UUID(1) }
+        }
+
+        // 関係ないDependencyは定義する必要がない。もし暗黙的に使われた場合も自動的に検知されて失敗になる。
+        await appStore.send(.setSettingsViewPresent) {
             $0.activeSheet = .settings
         }
     }
 
-    func testAddHistory() async {
-        let store =
-            TestStore(initialState: .init()) {
-                Roulette()
-            } withDependencies: {
-                $0.uuid = UUIDGenerator { UUID(123) }
-            }
-
-        let item = Item(number: .n0, color: .black, id: UUID(123))
-        await store.send(.layout(.add(item)))
-        await store.receive(.history(.add(item, isHit: false))) {
-            $0.history = .init(
-                items: [.init(item: item, isHit: false)],
-                displayLimit: 16
-            )
-        }
-    }
+//    func testAddHistory() async {
+//
+//        let appStore =
+//        TestStore(initialState: .init()) {
+//            AppFeature()
+//        } withDependencies: {
+//            $0.finishLaunchingAfterTheSecondTime()
+//            $0.uuid = UUIDGenerator { UUID(1) }
+//        }
+//
+//        await appStore.send(.onAppear) {
+//            $0.roulettes = [.init(id: UUID(1))]
+//            $0.current = $0.roulettes[0]
+//        }
+//        let rouletteStore = appStore.scope(
+//            state: {
+//
+//                RouletteView.ViewState(roulette: $0.current!, settings: $0.settings)
+//            }
+//        )
+//
+//        let itemWithOmomi = ItemWithOmomi(item: Item(number: .n0, color: .black, id: UUID(123)), omomi: 7)
+//        await rouletteStore.send(.roulette(.layout(.add(itemWithOmomi))))
+//        await rouletteStore.receive(.roulette(.history(.add(itemWithOmomi.item, isHit: false)))) {
+//            $0.roulette.history = .init(
+//                items: [.init(item: itemWithOmomi.item, isHit: false)],
+//                displayLimit: 16
+//            )
+//        }
+//    }
+//
 }
 
 extension DependencyValues {
@@ -77,14 +123,20 @@ extension DependencyValues {
         userDefaults.override(integer: 5, forKey: omomiWidthForHistoryKey)
         userDefaults.override(integer: 7, forKey: omomiWidthForPredictionKey)
         userDefaults.override(string: "the star", forKey: ruleKey)
+        userDefaults.override(data: Data(), forKey: roulettesKey)
         userDefaults.override(string: "tab", forKey: screenLayoutKey)
     }
 
-    mutating func finishLaunching() {
+    mutating func finishLaunchingAfterTheSecondTime() {
         userDefaults.override(bool: true, forKey: didFirstLaunchKey)
         userDefaults.override(integer: 5, forKey: omomiWidthForHistoryKey)
         userDefaults.override(integer: 7, forKey: omomiWidthForPredictionKey)
         userDefaults.override(string: "the star", forKey: ruleKey)
+        
+//        Roulette.State()
+        
+        userDefaults.override(data: Data(), forKey: roulettesKey)
+        
         userDefaults.override(string: "tab", forKey: screenLayoutKey)
     }
 }

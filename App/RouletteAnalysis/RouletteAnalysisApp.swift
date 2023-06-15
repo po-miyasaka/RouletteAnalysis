@@ -9,7 +9,6 @@ import ComposableArchitecture
 import RouletteFeature
 import SwiftUI
 #if os(macOS)
-
 #else
     final class AppDelegate: NSObject, UIApplicationDelegate {
         func application(
@@ -18,13 +17,13 @@ import SwiftUI
         ) -> Bool {
             return true
         }
+    
     }
 #endif
 
 @main
 struct RouletteAnalysisApp: App {
     #if os(macOS)
-
     #else
         @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     #endif
@@ -32,12 +31,10 @@ struct RouletteAnalysisApp: App {
     var body: some Scene {
         WindowGroup {
             #if os(macOS)
-
-                HomeView(store: Store(initialState: Roulette.State(), reducer: Roulette()))
-
+            AppView(store: Store(initialState: AppFeature.State(), reducer: AppFeature()))
             #else
                 NavigationView {
-                    HomeView(store: Store(initialState: Roulette.State(), reducer: Roulette()))
+                    AppView(store: Store(initialState: AppFeature.State(), reducer: AppFeature()))
                 }
             #endif
         }
