@@ -7,7 +7,7 @@
 
 import ComposableArchitecture
 import Item
-@testable import RouletteFeature
+@testable import TableLayout
 import XCTest
 
 @MainActor
@@ -16,7 +16,7 @@ final class LayoutTests: XCTestCase {
     func testSelectNumber() async throws {
         let layoutStore = TestStore(initialState: .init()
                                     , reducer: {
-            Layout()
+            TableLayout()
         })
         
         let item = Item(number: .n0, color: .black)

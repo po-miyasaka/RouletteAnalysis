@@ -8,41 +8,16 @@
 import ComposableArchitecture
 import Item
 import SwiftUI
+import TableLayout
 import Utility
 
-public struct Layout: ReducerProtocol {
-    public struct State: Equatable, Codable {
-        var selectedItemForAdding: Item?
-    }
 
-    public enum Action: Equatable {
-        case select(ItemWithOmomi)
-        case add(ItemWithOmomi)
-    }
-
-    public func reduce(into state: inout State, action: Action) -> ComposableArchitecture.EffectTask<Action> {
-        switch action {
-        case let .select(item):
-            if state.selectedItemForAdding?.number == item.item.number {
-                return .task {
-                    return .add(item)
-                }
-            } else {
-                state.selectedItemForAdding = item.item
-            }
-        case .add:
-            state.selectedItemForAdding = nil
-        }
-        return .none
-    }
-}
-
-public struct LayoutView: View {
+public struct TableLayoutView: View {
     public struct ViewState: Equatable {
-        var rule: Rule
-        var predictedData: [ItemWithOmomi]
-        var selectedItem: Item?
-        var lastItem: Item?
+        public var rule: Rule
+        public var predictedData: [ItemWithOmomi]
+        public var selectedItem: Item?
+        public var lastItem: Item?
 
         public init(rule: Rule, predictedData: [ItemWithOmomi], selectedItem: Item?, lastItem: Item?) {
             self.rule = rule
@@ -52,9 +27,9 @@ public struct LayoutView: View {
         }
     }
 
-    @ObservedObject var viewStore: ViewStore<ViewState, Layout.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, TableLayout.Action>
 
-    public init(store: Store<ViewState, Layout.Action>) {
+    public init(store: Store<ViewState, TableLayout.Action>) {
         viewStore = ViewStore(store)
     }
 

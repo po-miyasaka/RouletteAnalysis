@@ -8,15 +8,18 @@
 import ComposableArchitecture
 import Item
 import SwiftUI
-import Tutorial
-import Utility
+import Roulette
+import Setting
+import HistoryView
+import WheelView
+import TableLayoutView
 
 public struct RouletteView: View {
     public struct ViewState: Equatable {
-        var roulette: Roulette.State
-        var settings: Settings.State
+        public var roulette: Roulette.State
+        public var settings: Setting.State
 
-        init(roulette: Roulette.State, settings: Settings.State) {
+        public init(roulette: Roulette.State, settings: Setting.State) {
             self.roulette = roulette
             self.settings = settings
         }
@@ -46,6 +49,7 @@ public struct RouletteView: View {
 
     public init(store: Store<ViewState, Roulette.Action>) {
         self.store = store
+        
         viewStore = ViewStore(store)
     }
 
@@ -109,7 +113,7 @@ public struct RouletteView: View {
         }, action: { Roulette.Action.wheel($0) })
 
         let layoutStore = store.scope(state: {
-            LayoutView.ViewState(
+            TableLayoutView.ViewState(
                 rule: $0.settings.rule,
                 predictedData: $0.layoutData,
                 selectedItem: $0.roulette.layout.selectedItemForAdding,
@@ -117,7 +121,7 @@ public struct RouletteView: View {
             )
         }, action: { Roulette.Action.layout($0) })
         ScrollView(showsIndicators: false) {
-            LayoutView(store: layoutStore).padding(.bottom, 44).padding(8)
+            TableLayoutView(store: layoutStore).padding(.bottom, 44).padding(8)
         }
         WheelView(store: wheelStore).frame(width: 330)
     }

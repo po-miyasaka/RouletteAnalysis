@@ -48,7 +48,7 @@ public struct TutorialView: View {
                     This is the Roulette wheel.
                     The more times a number is hit and added to the history, the deeper the colour of the cells.
                     When a number is added, the numbers around it become deeper.
-                    You can set how many cells are affected by using the Settings view.
+                    You can set how many cells are affected by using the Setting view.
 
                     You can tap the number you think will be the next number.
                     You can also set how many cells will be selected centred on the selected number.

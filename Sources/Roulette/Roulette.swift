@@ -10,6 +10,9 @@ import Foundation
 import Item
 import SwiftUI
 import UserDefaultsClient
+import History
+import Wheel
+import TableLayout
 
 public struct Roulette: ReducerProtocol {
     public init() {}
@@ -24,13 +27,13 @@ public struct Roulette: ReducerProtocol {
         public var color: ColorData
         public var history: History.State = .init()
         public var wheel: Wheel.State = .init()
-        public var layout: Layout.State = .init() // Layoutに閉じたプロパティしか持っていなくてもここに定義してScopeとして登録しないとReducerとしてはつかえない。
+        public var layout: TableLayout.State = .init() // Layoutに閉じたプロパティしか持っていなくてもここに定義してScopeとして登録しないとReducerとしてはつかえない。
         public var selectedForPrediction: Item?
     }
 
     public enum Action: Equatable {
         case history(History.Action)
-        case layout(Layout.Action)
+        case layout(TableLayout.Action)
         case wheel(Wheel.Action)
         case onAppear
     }
@@ -41,7 +44,7 @@ public struct Roulette: ReducerProtocol {
         }
         // これによりLayout内のReducerが呼ばれる。これが無いと呼ばれない。これがpullbackか
         Scope(state: \.layout, action: /Roulette.Action.layout) {
-            Layout()
+            TableLayout()
         }
 
         Scope(state: \.wheel, action: /Roulette.Action.wheel) {

@@ -10,6 +10,11 @@ import Item
 import SwiftUI
 import Tutorial
 import Utility
+import App
+import Roulette
+import Setting
+import SettingView
+import RouletteView
 
 public struct AppView: View {
     let store: StoreOf<AppFeature>
@@ -23,11 +28,12 @@ public struct AppView: View {
     @ViewBuilder
     public var body: some View {
         Group {
-            IfLetStore(store.scope(state: { state in
-                state.current.flatMap { RouletteView.ViewState(roulette: $0, settings: state.settings) }
-            }, action: AppFeature.Action.roulette), then: { store in
-                RouletteView(store: store)
-            }) // stateが無いときは何も返さないしonAppearも呼ばれない。
+            IfLetStore(store.scope(
+                state: { state in
+                    state.current.flatMap { RouletteView.ViewState(roulette: $0, settings: state.settings) }
+                }, action: AppFeature.Action.roulette),
+                       then: RouletteView.init(store:)
+            ) // stateが無いときは何も返さないしonAppearも呼ばれないのでEmptyView
             EmptyView()
         }
         .onAppear {
@@ -77,7 +83,7 @@ public struct AppView: View {
             case .settings:
                 let settingsStore = store.scope(state: { $0.settings }, action: { AppFeature.Action.settings($0) })
 
-                SettingsView(store: settingsStore).extend {
+                SettingView(store: settingsStore).extend {
                     #if os(macOS)
                         $0.padding()
                     #else
@@ -99,7 +105,7 @@ public struct AppView: View {
 
             ToolbarItem(placement: .navigation, content: {
                 Button {
-                    viewStore.send(.setSettingsViewPresent)
+                    viewStore.send(.setSettingViewPresent)
                 } label: {
                     Image(systemName: "gear")
                 }

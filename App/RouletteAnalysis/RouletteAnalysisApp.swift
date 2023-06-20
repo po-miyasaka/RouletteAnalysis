@@ -6,7 +6,8 @@
 //
 
 import ComposableArchitecture
-import RouletteFeature
+import AppView
+import App
 import SwiftUI
 #if os(macOS)
 #else

@@ -1,6 +1,6 @@
 import ComposableArchitecture
 import Item
-@testable import RouletteFeature
+@testable import App
 @testable import UserDefaultsClient
 import XCTest
 
@@ -79,7 +79,7 @@ final class RouletteAnalysisTests: XCTestCase {
         }
 
         // 関係ないDependencyは定義する必要がない。もし暗黙的に使われた場合も自動的に検知されて失敗になる。
-        await appStore.send(.setSettingsViewPresent) {
+        await appStore.send(AppFeature.Action.setSettingViewPresent) {
             $0.activeSheet = .settings
         }
     }

@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D52677582A2193AD0042E3EB /* RouletteFeature in Frameworks */ = {isa = PBXBuildFile; productRef = D52677572A2193AD0042E3EB /* RouletteFeature */; };
 		D542253C2A2186ED000A71A9 /* RouletteAnalysisApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D542253B2A2186ED000A71A9 /* RouletteAnalysisApp.swift */; };
 		D54225402A2186EF000A71A9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D542253F2A2186EF000A71A9 /* Assets.xcassets */; };
 		D54225432A2186EF000A71A9 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D54225422A2186EF000A71A9 /* Preview Assets.xcassets */; };
+		D57833932A41B76400AF12F0 /* AppView in Frameworks */ = {isa = PBXBuildFile; productRef = D57833922A41B76400AF12F0 /* AppView */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,7 +26,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D52677582A2193AD0042E3EB /* RouletteFeature in Frameworks */,
+				D57833932A41B76400AF12F0 /* AppView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,7 +93,7 @@
 			);
 			name = RouletteAnalysis;
 			packageProductDependencies = (
-				D52677572A2193AD0042E3EB /* RouletteFeature */,
+				D57833922A41B76400AF12F0 /* AppView */,
 			);
 			productName = RouletteAnalysis;
 			productReference = D54225382A2186ED000A71A9 /* RouletteAnalysis.app */;
@@ -275,9 +275,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		D52677572A2193AD0042E3EB /* RouletteFeature */ = {
+		D57833922A41B76400AF12F0 /* AppView */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = RouletteFeature;
+			productName = AppView;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

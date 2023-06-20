@@ -6,10 +6,10 @@
 //
 
 import ComposableArchitecture
-import Foundation
-import Item
 import SwiftUI
 import UserDefaultsClient
+import Setting
+import Roulette
 
 public struct AppFeature: ReducerProtocol {
     public init() {}
@@ -17,7 +17,7 @@ public struct AppFeature: ReducerProtocol {
     @Dependency(\.uuid) var uuid
     public struct State: Equatable {
         public init() {}
-        public var settings: Settings.State = .init()
+        public var settings: Setting.State = .init()
         public var current: Roulette.State?
         public var activeSheet: ActiveSheet?
         public var roulettes: [Roulette.State] = []
@@ -26,9 +26,9 @@ public struct AppFeature: ReducerProtocol {
     }
 
     public enum Action: Equatable {
-        case settings(Settings.Action)
+        case settings(Setting.Action)
         case roulette(Roulette.Action)
-        case setSettingsViewPresent
+        case setSettingViewPresent
         case select(Roulette.State.ID)
         case showTutorial
         case hideSheet
@@ -53,7 +53,7 @@ public struct AppFeature: ReducerProtocol {
 
     public var body: some ReducerProtocol<State, Action> {
         Scope(state: \.settings, action: /AppFeature.Action.settings) {
-            Settings()
+            Setting()
         }
 
         Reduce { state, action in
@@ -113,7 +113,7 @@ public struct AppFeature: ReducerProtocol {
             case .hideSheet:
                 state.activeSheet = nil
 
-            case .setSettingsViewPresent:
+            case .setSettingViewPresent:
                 state.activeSheet = .settings
             case .newRoulette:
 
