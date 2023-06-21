@@ -98,3 +98,23 @@ public struct ColorData: Equatable, Codable {
         return .init(red: red, green: green, blue: blue)
     }
 }
+
+public extension StoreOf<Roulette> {
+    var historyStore: StoreOf<History> {
+        scope(
+            state: \.history,
+            action: Roulette.Action.history)
+    }
+    var wheelStore: StoreOf<Wheel> {
+        scope(
+            state: \.wheel,
+            action: Roulette.Action.wheel)
+    }
+    
+    var tableLayoutStore: StoreOf<TableLayout> {
+        scope(
+            state: \.layout,
+            action: Roulette.Action.layout)
+    }
+    
+}

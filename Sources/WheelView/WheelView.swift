@@ -10,56 +10,55 @@ import Item
 import SwiftUI
 import Wheel
 import Utility
+import Roulette
+import Setting
 
 public struct WheelView: View {
     typealias ItemWithOmomiAndAngle = (itemWithOmomi: ItemWithOmomi, angle: Angle)
-    public struct ViewState: Equatable {
-        public var calucuratedData: [ItemWithOmomi]
-        public var selectedItem: Item?
-        public var lastItem: Item?
-        public var mode: Wheel.Mode
-        public var omomiWidthForPrediction: OmomiWidth
-        
-        public init(calucuratedData: [ItemWithOmomi], selectedItem: Item?, lastItem: Item?, mode: Wheel.Mode, omomiWidthForPrediction: OmomiWidth) {
-            self.calucuratedData = calucuratedData
-            self.selectedItem = selectedItem
-            self.lastItem = lastItem
-            self.mode = mode
-            self.omomiWidthForPrediction = omomiWidthForPrediction
-        }
 
-        var angles: [ItemWithOmomiAndAngle] {
-            let minAngle = Angle(degrees: -90)
-            let maxAngle = Angle(degrees: 270)
-            let tickDegrees = (maxAngle.degrees - minAngle.degrees) / Double(calucuratedData.count)
-            var result = [ItemWithOmomiAndAngle]()
-
-            for tick in 0 ..< calucuratedData.count {
-                let data = calucuratedData[tick]
-                let angle = Angle(degrees: Double(tick) * tickDegrees)
-                //            print(angle.degrees)
-                result.append((data, angle))
-            }
-
-            return result
-        }
+    @ObservedObject var rouletteViewStore: ViewStoreOf<Roulette>
+    @ObservedObject var settingViewStore: ViewStoreOf<Setting>
+    @ObservedObject var wheelViewStore: ViewStoreOf<Wheel>
+    let rouletteStore: StoreOf<Roulette>
+    let settingStore: StoreOf<Setting>
+    
+    public init(rouletteStore: StoreOf<Roulette>, settingStore: StoreOf<Setting>) {
+        self.rouletteViewStore = ViewStore(rouletteStore)
+        self.settingViewStore = ViewStore(settingStore)
+        self.rouletteStore = rouletteStore
+        self.settingStore = settingStore
+        self.wheelViewStore = ViewStore(rouletteStore.wheelStore)
     }
 
-    @ObservedObject var viewStore: ViewStore<ViewState, Wheel.Action>
-
     let width: Double = 290
-    public init(store: Store<ViewState, Wheel.Action>) {
-        viewStore = ViewStore(store)
+    
+    func angles(culucuratedData: [ItemWithOmomi]) -> [ItemWithOmomiAndAngle] {
+        let minAngle = Angle(degrees: -90)
+        let maxAngle = Angle(degrees: 270)
+        let tickDegrees = (maxAngle.degrees - minAngle.degrees) / Double(culucuratedData.count)
+        var result = [ItemWithOmomiAndAngle]()
+
+        for tick in 0 ..< culucuratedData.count {
+            let data = culucuratedData[tick]
+            let angle = Angle(degrees: Double(tick) * tickDegrees)
+            //            print(angle.degrees)
+            result.append((data, angle))
+        }
+
+        return result
     }
 
     public var body: some View {
-        let item = viewStore.mode.searchType.flatMap { viewStore.calucuratedData.searchFor(width: viewStore.omomiWidthForPrediction, searchType: $0) }
+        
+        let calucuratedData = wheelData(roulette: rouletteViewStore.state, setting: settingViewStore.state)
+        let angles = angles(culucuratedData: calucuratedData)
+        let item = wheelViewStore.mode.searchType.flatMap { calucuratedData.searchFor(width: settingViewStore.omomiWidthForPrediction, searchType: $0) }
 
         Group {
             VStack(alignment: .center, spacing: 24) {
                 ZStack(alignment: .center) {
-                    let tick = (Double(360) / Double(viewStore.angles.count))
-                    ForEach(Array(viewStore.angles.enumerated()), id: \.element.itemWithOmomi.item.number) { _, data in
+                    let tick = (Double(360) / Double(angles.count))
+                    ForEach(Array(angles.enumerated()), id: \.element.itemWithOmomi.item.number) { _, data in
                         rouletteNumbers(tick: tick, data: data)
                     }
 
@@ -68,7 +67,7 @@ public struct WheelView: View {
                 }.frame(width: width, height: width)
                     .offset(y: -(width / 2))
 
-                Picker("Mode", selection: viewStore.binding(get: \.mode, send: {
+                Picker("Mode", selection: wheelViewStore.binding(get: \.mode, send: {
                     Wheel.Action.change($0)
                 })) {
                     ForEach(Wheel.Mode.allCases, id: \.self) {
@@ -79,8 +78,8 @@ public struct WheelView: View {
         }
         .onChange(of: item, perform: { newValue in
             // TCA doesn't allow knowing changes of states and sending action after a state changed, so doing it here.
-            if let item = newValue?.item, item.number != viewStore.selectedItem?.number {
-                viewStore.send(.select(item))
+            if let item = newValue?.item, item.number != rouletteViewStore.selectedForPrediction?.number {
+                wheelViewStore.send(.select(item))
             }
         })
     }
@@ -102,7 +101,7 @@ public struct WheelView: View {
                 .foregroundColor(.orange)
                 .rotationEffect(data.angle - Angle(degrees: Double(0.5)), anchor: UnitPoint(x: 0.5, y: 1))
         }
-        if data.itemWithOmomi.item.number == viewStore.lastItem?.number {
+        if data.itemWithOmomi.item.number == rouletteViewStore.history.limitedHistory.last?.item.number {
             Path { path in
 
                 //                    path.addLines([CGPoint(x: width / 2, y: width / 2)])
@@ -136,7 +135,7 @@ public struct WheelView: View {
             .rotationEffect(data.angle - Angle(degrees: Double(0.5)), anchor: UnitPoint(x: 0.5, y: 1))
             .onTapGesture {
                 print(data.itemWithOmomi.item.number.str)
-                viewStore.send(.selectWithTap(data.itemWithOmomi.item))
+                wheelViewStore.send(.selectWithTap(data.itemWithOmomi.item))
             }
 
         Path { path in
@@ -161,7 +160,7 @@ public struct WheelView: View {
             .rotationEffect(data.angle - Angle(degrees: Double(1)), anchor: UnitPoint(x: 0.5, y: 1))
             .onTapGesture {
                 print(data.itemWithOmomi.item.number.str)
-                viewStore.send(.select(data.itemWithOmomi.item))
+                wheelViewStore.send(.select(data.itemWithOmomi.item))
             }
 
         VStack(alignment: .center) {
@@ -233,4 +232,14 @@ extension Angle: Identifiable {
     public var id: Double {
         radians
     }
+}
+
+public func wheelData(roulette: Roulette.State, setting: Setting.State) -> [ItemWithOmomi] {
+        makeWheelData(history: roulette.history.limitedHistory.map(\.item),
+                      omomiWidthForSelecting: setting.omomiWidthForPrediction,
+                      omomiWidthForHistory: setting.omomiWidthForHistory,
+                      rule: setting.rule,
+                      selectedItem: roulette.selectedForPrediction)
+    
+        
 }

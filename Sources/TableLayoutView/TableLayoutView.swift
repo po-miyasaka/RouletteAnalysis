@@ -10,55 +10,54 @@ import Item
 import SwiftUI
 import TableLayout
 import Utility
+import Roulette
+import Setting
 
 
 public struct TableLayoutView: View {
-    public struct ViewState: Equatable {
-        public var rule: Rule
-        public var predictedData: [ItemWithOmomi]
-        public var selectedItem: Item?
-        public var lastItem: Item?
 
-        public init(rule: Rule, predictedData: [ItemWithOmomi], selectedItem: Item?, lastItem: Item?) {
-            self.rule = rule
-            self.predictedData = predictedData
-            self.selectedItem = selectedItem
-            self.lastItem = lastItem
-        }
-    }
-
-    @ObservedObject var viewStore: ViewStore<ViewState, TableLayout.Action>
-
-    public init(store: Store<ViewState, TableLayout.Action>) {
-        viewStore = ViewStore(store)
+    @ObservedObject var tableLayoutViewStore: ViewStoreOf<TableLayout>
+    @ObservedObject var rouletteViewStore: ViewStoreOf<Roulette>
+    @ObservedObject var settingViewStore: ViewStoreOf<Setting>
+    let rouletteStore: StoreOf<Roulette>
+    let settingStore: StoreOf<Setting>
+    
+    public init(rouletteStore: StoreOf<Roulette>, settingStore: StoreOf<Setting>) {
+        self.rouletteViewStore = ViewStore(rouletteStore)
+        self.settingViewStore = ViewStore(settingStore)
+        self.rouletteStore = rouletteStore
+        self.settingStore = settingStore
+        self.tableLayoutViewStore = ViewStore(rouletteStore.tableLayoutStore)
     }
 
     public var body: some View {
-        let zeroColumn = Array(repeating: GridItem(.flexible(), spacing: 3), count: viewStore.rule.zeroCount)
+        
+        let predictedData = layoutData(roulette: rouletteViewStore.state, setting: settingViewStore.state)
+        let zeroColumn = Array(repeating: GridItem(.flexible(), spacing: 3), count: settingViewStore.rule.zeroCount)
         let numbersColumn = Array(repeating: GridItem(.flexible(), spacing: 3), count: 3)
 
         VStack(alignment: .center, spacing: 3) {
             Spacer(minLength: 20)
             LazyVGrid(columns: zeroColumn, alignment: .center, spacing: 0, content: {
-                ForEach(0 ..< viewStore.rule.zeroCount, id: \.self) { i in
-                    makeLayoutCell(index: i)
+                ForEach(0 ..< settingViewStore.rule.zeroCount, id: \.self) { i in
+                    makeLayoutCell(predictedData: predictedData, index: i)
                 }
                 }).offset(y: 0)
                 .padding(.horizontal, 50)
             LazyVGrid(columns: numbersColumn, spacing: 3, content: {
-                ForEach(viewStore.rule.zeroCount ..< viewStore.predictedData.endIndex, id: \.self) { i in
-                    makeLayoutCell(index: i)
+                ForEach(settingViewStore.rule.zeroCount ..< predictedData.endIndex, id: \.self) { i in
+                    makeLayoutCell(predictedData: predictedData, index: i)
                 }
                 })
         }
     }
 
     @ViewBuilder
-    func makeLayoutCell(index: Int) -> some View {
-        let item = viewStore.predictedData[index]
-        LayoutCell(isSelected: viewStore.selectedItem == item.item, data: item) { item in
+    func makeLayoutCell(predictedData: [ItemWithOmomi], index: Int) -> some View {
+        let item = predictedData[index]
+        LayoutCell(isSelected: tableLayoutViewStore.selectedItemForAdding == item.item, data: item) { item in
 
-            viewStore.send(.select(item))
+            tableLayoutViewStore.send(.select(item))
         }
         .extend {
             #if os(macOS)
@@ -68,7 +67,7 @@ public struct TableLayoutView: View {
             #endif
         }
 
-        .border(item.item.number == viewStore.lastItem?.number ? .yellow : .clear, width: 2)
+        .border(item.item.number == rouletteViewStore.history.limitedHistory.last?.item.number ? .yellow : .clear, width: 2)
     }
 }
 
@@ -95,4 +94,17 @@ struct LayoutCell: View {
             tapAction(data)
         }.cornerRadius(4)
     }
+}
+
+public func layoutData(
+    roulette: Roulette.State,
+    setting: Setting.State
+) -> [ItemWithOmomi] {
+        makeLayoutData(
+            history: roulette.history.limitedHistory.map(\.item),
+            omomiWidthForSelecting: setting.omomiWidthForPrediction,
+            omomiWidthForHistory: setting.omomiWidthForHistory,
+            rule: setting.rule,
+            selectedItem: roulette.selectedForPrediction
+        )
 }

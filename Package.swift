@@ -171,6 +171,7 @@ let package = Package(
                            .HistoryView,
                            .SettingView,
                            .WheelView,
+                           .App,
                            .other(composableArchitecture)]
         ),
         target(
@@ -188,6 +189,7 @@ let package = Package(
                            .Setting,
                            .Item,
                            .TableLayout,
+                           .Roulette,
                            .Utility,
                            .other(composableArchitecture)]
         ),
@@ -205,6 +207,7 @@ let package = Package(
                            .Item,
                            .Wheel,
                            .Utility,
+                           .Roulette,
                            .other(composableArchitecture)]
         ),
         target(

@@ -19,60 +19,60 @@ import RouletteView
 public struct AppView: View {
     let store: StoreOf<AppFeature>
     @ObservedObject var viewStore: ViewStore<AppFeature.State, AppFeature.Action>
-
+    
     public init(store: StoreOf<AppFeature>) {
         self.store = store
         viewStore = ViewStore(store)
     }
-
+    
     @ViewBuilder
     public var body: some View {
         Group {
-            IfLetStore(store.scope(
-                state: { state in
-                    state.current.flatMap { RouletteView.ViewState(roulette: $0, settings: state.settings) }
-                }, action: AppFeature.Action.roulette),
-                       then: RouletteView.init(store:)
-            ) // stateが無いときは何も返さないしonAppearも呼ばれないのでEmptyView
+            IfLetStore(
+                store.scope(state: \.current, action: AppFeature.Action.roulette),
+                then: { rouletteStore in
+                    RouletteView(rouletteStore: rouletteStore, settingStore: store.settingStore)
+                }
+            )// stateが無いときは何も返さないしonAppearも呼ばれないのでEmptyView
             EmptyView()
         }
         .onAppear {
             viewStore.send(.onAppear)
         }
         .extend {
-            #if os(macOS)
-
-                $0
-            #else
-                $0.onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
-                    // TODO: Dependency利用 (しなくてもいいかも)
-                    viewStore.send(.save)
-                }
-            #endif
+#if os(macOS)
+            
+            $0
+#else
+            $0.onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
+                // TODO: Dependency利用 (しなくてもいいかも)
+                viewStore.send(.save)
+            }
+#endif
         }
-
+        
         .extend {
-            #if os(macOS)
-                $0.alert(item: viewStore.binding(get: \.activeAlert, send: { value in AppFeature.Action.alert(value) }), content: { item in
-
-                    Alert(title: Text(item.rawValue), primaryButton: .destructive(Text("Close this roulette")) {
-                        viewStore.send(.closeRoulette)
+#if os(macOS)
+            $0.alert(item: viewStore.binding(get: \.activeAlert, send: { value in AppFeature.Action.alert(value) }), content: { item in
+                
+                Alert(title: Text(item.rawValue), primaryButton: .destructive(Text("Close this roulette")) {
+                    viewStore.send(.closeRoulette)
                 }, secondaryButton: .cancel(Text("Cancel")))
-
+                
             })
-            #else
-                $0.actionSheet(item: viewStore.binding(get: \.activeAlert, send: { value in AppFeature.Action.alert(value) }), content: { item in
-
-                    ActionSheet(title: Text(item.rawValue), buttons: [
-                        .destructive(Text("Close this roulette")) {
-                            viewStore.send(.closeRoulette)
-                        },
-                        .cancel(),
-                    ])
+#else
+            $0.actionSheet(item: viewStore.binding(get: \.activeAlert, send: { value in AppFeature.Action.alert(value) }), content: { item in
+                
+                ActionSheet(title: Text(item.rawValue), buttons: [
+                    .destructive(Text("Close this roulette")) {
+                        viewStore.send(.closeRoulette)
+                    },
+                    .cancel(),
+                ])
             })
-            #endif
+#endif
         }
-
+        
         .sheet(
             item: viewStore.binding(
                 get: \.activeSheet,
@@ -82,27 +82,27 @@ public struct AppView: View {
             switch activeSheet {
             case .settings:
                 let settingsStore = store.scope(state: { $0.settings }, action: { AppFeature.Action.settings($0) })
-
+                
                 SettingView(store: settingsStore).extend {
-                    #if os(macOS)
-                        $0.padding()
-                    #else
-                        $0
-                    #endif
+#if os(macOS)
+                    $0.padding()
+#else
+                    $0
+#endif
                 }
             case .tutorial:
                 TutorialView()
             }
         }
-
+        
         .toolbar {
-            #if os(macOS)
-                let placement: ToolbarItemPlacement = .navigation
-
-            #elseif os(iOS)
-                let placement: ToolbarItemPlacement = .navigationBarTrailing
-            #endif
-
+#if os(macOS)
+            let placement: ToolbarItemPlacement = .navigation
+            
+#elseif os(iOS)
+            let placement: ToolbarItemPlacement = .navigationBarTrailing
+#endif
+            
             ToolbarItem(placement: .navigation, content: {
                 Button {
                     viewStore.send(.setSettingViewPresent)
@@ -130,17 +130,17 @@ public struct AppView: View {
                 }, label: {
                     Image(systemName: "plus.square.on.square.fill")
                 })
-
+                
             })
-
+            
             ToolbarItem(placement: placement, content: {
                 Button(action: {
                     viewStore.send(.alert(.close))
                 }, label: {
                     Image(systemName: "xmark.circle")
-
+                    
                 })
-
+                
             })
         }
     }

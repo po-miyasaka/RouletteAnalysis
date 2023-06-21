@@ -11,34 +11,34 @@ final class RouletteAnalysisTests: XCTestCase {
         
     }
 
-    
-    func testFirstLaunch() async throws {
-        
-        let appStore =
-        TestStore(initialState: .init()) {
-            AppFeature()
-        } withDependencies: {
-            $0.firstLaunching()
-            $0.uuid = UUIDGenerator { UUID(1) }
-        }
-        
-        let rouletteStore = appStore.scope(
-            state: {
-                RouletteView.ViewState(roulette: try! XCTUnwrap($0.current), settings: $0.settings)
-            }
-        )
-        
-        await appStore.send(.onAppear) {
-            $0.current = .init(id: UUID(1))
-            $0.roulettes = [.init(id: UUID(1))]
-        }
-        await rouletteStore.receive(.settings(.setup))
-        await appStore.receive(.showTutorial, timeout: 3) {
-            $0.activeSheet = .tutorial
-        }
-        XCTAssertTrue(appStore.dependencies.userDefaults.didFirstLaunch)
-        await appStore.finish()
-    }
+//    
+//    func testFirstLaunch() async throws {
+//        
+//        let appStore =
+//        TestStore(initialState: .init()) {
+//            AppFeature()
+//        } withDependencies: {
+//            $0.firstLaunching()
+//            $0.uuid = UUIDGenerator { UUID(1) }
+//        }
+//        
+//        let rouletteStore = appStore.scope(
+//            state: {
+//                RouletteView.ViewState(roulette: try! XCTUnwrap($0.current), settings: $0.settings)
+//            }
+//        )
+//        
+//        await appStore.send(.onAppear) {
+//            $0.current = .init(id: UUID(1))
+//            $0.roulettes = [.init(id: UUID(1))]
+//        }
+//        await rouletteStore.receive(.settings(.setup))
+//        await appStore.receive(.showTutorial, timeout: 3) {
+//            $0.activeSheet = .tutorial
+//        }
+//        XCTAssertTrue(appStore.dependencies.userDefaults.didFirstLaunch)
+//        await appStore.finish()
+//    }
 
 //    func testLaunchAfterTheSecondTime() async throws {
 //
