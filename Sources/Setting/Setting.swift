@@ -15,8 +15,8 @@ public struct Setting: ReducerProtocol {
     @Dependency(\.userDefaults) var userDefaults
     public init() {}
     public struct State: Equatable {
-        public var omomiWidthForPrediction: OmomiWidth = .seven
-        public var omomiWidthForHistory: OmomiWidth = .five
+        public var weightWidthForPrediction: WeightWidth = .seven
+        public var weightWidthForHistory: WeightWidth = .five
         public var rule: Rule = .theStar
         public var defaultDisplayedHistoryLimit: Int = 16
         public var screenLayout: ScreenLayout = .tab
@@ -27,8 +27,8 @@ public struct Setting: ReducerProtocol {
     public enum Action: Equatable {
         case changeRule(Rule)
         case showChangeRuleAlert(Rule)
-        case changeOmomiForPrediction(OmomiWidth)
-        case changeOmomiForHistory(OmomiWidth)
+        case changeWeightForPrediction(WeightWidth)
+        case changeWeightForHistory(WeightWidth)
         case changeDefaultDisplayedHistoryLimit(Int)
         case changeScreenLayout(ScreenLayout)
         case setup
@@ -42,7 +42,7 @@ public struct Setting: ReducerProtocol {
         public var displayText: String {
             switch self {
             case .change:
-                return "Changing a rule deletes past data. \n Would you like to change the rule?"
+                return "Changing a rule deletes past data. \n Would you like to change the rule ?"
             }
         }
 
@@ -66,15 +66,15 @@ public struct Setting: ReducerProtocol {
             return .fireAndForget {
                 await userDefaults.setRule(rule.rawValue)
             }
-        case let .changeOmomiForPrediction(omomiForPrediction):
-            state.omomiWidthForPrediction = omomiForPrediction
+        case let .changeWeightForPrediction(weightForPrediction):
+            state.weightWidthForPrediction = weightForPrediction
             return .fireAndForget {
-                await userDefaults.setOmoiWidthForPrediction(omomiForPrediction.rawValue)
+                await userDefaults.setOmoiWidthForPrediction(weightForPrediction.rawValue)
             }
-        case let .changeOmomiForHistory(omomiForHistory):
-            state.omomiWidthForHistory = omomiForHistory
+        case let .changeWeightForHistory(weightForHistory):
+            state.weightWidthForHistory = weightForHistory
             return .fireAndForget {
-                await userDefaults.setOmoiWidthForHistory(omomiForHistory.rawValue)
+                await userDefaults.setOmoiWidthForHistory(weightForHistory.rawValue)
             }
         case let .changeDefaultDisplayedHistoryLimit(value):
             state.defaultDisplayedHistoryLimit = value
@@ -88,8 +88,8 @@ public struct Setting: ReducerProtocol {
             }
         case .setup:
             state.rule = userDefaults.rule.flatMap(Rule.init(rawValue:)) ?? .theStar
-            state.omomiWidthForPrediction = userDefaults.omomiWidthForPrediction.flatMap(OmomiWidth.init(rawValue:)) ?? .seven
-            state.omomiWidthForHistory = userDefaults.omomiWidthForHistory.flatMap(OmomiWidth.init(rawValue:)) ?? .five
+            state.weightWidthForPrediction = userDefaults.weightWidthForPrediction.flatMap(WeightWidth.init(rawValue:)) ?? .seven
+            state.weightWidthForHistory = userDefaults.weightWidthForHistory.flatMap(WeightWidth.init(rawValue:)) ?? .five
 
             state.defaultDisplayedHistoryLimit = userDefaults.defaultDisplayedHistoryLimit ?? 16
             state.screenLayout = userDefaults.screenLayout.flatMap(ScreenLayout.init(rawValue:)) ?? .tab

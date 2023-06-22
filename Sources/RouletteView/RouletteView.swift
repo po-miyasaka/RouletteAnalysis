@@ -91,11 +91,11 @@ extension Bool: Identifiable {
 }
 
 
-public func layoutData(roulette: Roulette.State, setting: Setting.State) -> [ItemWithOmomi] {
+public func layoutData(roulette: Roulette.State, setting: Setting.State) -> [ItemWithWeight] {
         makeLayoutData(
             history: roulette.history.limitedHistory.map(\.item),
-            omomiWidthForSelecting: setting.omomiWidthForPrediction,
-            omomiWidthForHistory: setting.omomiWidthForHistory,
+            weightWidthForSelecting: setting.weightWidthForPrediction,
+            weightWidthForHistory: setting.weightWidthForHistory,
             rule: setting.rule,
             selectedItem: roulette.selectedForPrediction
         )

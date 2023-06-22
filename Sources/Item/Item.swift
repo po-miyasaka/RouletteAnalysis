@@ -95,19 +95,19 @@ public struct Item: Identifiable, Equatable, Codable {
     }
 }
 
-public struct ItemWithOmomi: Equatable, Codable {
+public struct ItemWithWeight: Equatable, Codable {
     public var item: Item
-    public var omomi: Int
+    public var weight: Int
     public var candidated: Bool = false
 
-    public init(item: Item, omomi: Int, candidated: Bool = false) {
+    public init(item: Item, weight: Int, candidated: Bool = false) {
         self.item = item
-        self.omomi = omomi
+        self.weight = weight
         self.candidated = candidated
     }
 }
 
-public enum OmomiWidth: String, CaseIterable {
+public enum WeightWidth: String, CaseIterable {
     case one
     case three
     case five
@@ -154,7 +154,7 @@ public enum OmomiWidth: String, CaseIterable {
         }
     }
 
-    public func omomiFar(from far: Int) -> Int {
+    public func weightFar(from far: Int) -> Int {
         return ((offset + 1) - far) + 5
     }
 }
@@ -341,90 +341,90 @@ public enum Rule: String, CaseIterable {
     }
 }
 
-public func makeWheelData(history: [Item], omomiWidthForSelecting: OmomiWidth, omomiWidthForHistory: OmomiWidth, rule: Rule, selectedItem: Item?) -> [ItemWithOmomi] {
-    let omomiedArray = calcurate(history: history, omomiWidth: omomiWidthForHistory, rule: rule, selectedItem: selectedItem)
+public func makeWheelData(history: [Item], weightWidthForSelecting: WeightWidth, weightWidthForHistory: WeightWidth, rule: Rule, selectedItem: Item?) -> [ItemWithWeight] {
+    let weightedArray = calcurate(history: history, weightWidth: weightWidthForHistory, rule: rule, selectedItem: selectedItem)
     let wheel = rule.wheel
-    let candidated = candidate(omomiWidth: omomiWidthForSelecting, rule: rule, selectedItem: selectedItem)
+    let candidated = candidate(weightWidth: weightWidthForSelecting, rule: rule, selectedItem: selectedItem)
     return wheel.map { item in
-        .init(item: item, omomi: omomiedArray.first(where: { $0.item.number == item.number })?.omomi ?? 0, candidated: candidated.contains(where: { $0.number.str == item.number.str }))
+        .init(item: item, weight: weightedArray.first(where: { $0.item.number == item.number })?.weight ?? 0, candidated: candidated.contains(where: { $0.number.str == item.number.str }))
     }
 }
 
-public func makeLayoutData(history: [Item], omomiWidthForSelecting: OmomiWidth, omomiWidthForHistory: OmomiWidth, rule: Rule, selectedItem: Item?) -> [ItemWithOmomi] {
-    let omomiedArray = calcurate(history: history, omomiWidth: omomiWidthForHistory, rule: rule, selectedItem: selectedItem)
+public func makeLayoutData(history: [Item], weightWidthForSelecting: WeightWidth, weightWidthForHistory: WeightWidth, rule: Rule, selectedItem: Item?) -> [ItemWithWeight] {
+    let weightedArray = calcurate(history: history, weightWidth: weightWidthForHistory, rule: rule, selectedItem: selectedItem)
     let layout = rule.layout
-    let candidated = candidate(omomiWidth: omomiWidthForSelecting, rule: rule, selectedItem: selectedItem)
+    let candidated = candidate(weightWidth: weightWidthForSelecting, rule: rule, selectedItem: selectedItem)
     return layout.map { item in
-        .init(item: item, omomi: omomiedArray.first(where: { $0.item.number.str == item.number.str })?.omomi ?? 0, candidated: candidated.contains(where: { $0.number.str == item.number.str }))
+        .init(item: item, weight: weightedArray.first(where: { $0.item.number.str == item.number.str })?.weight ?? 0, candidated: candidated.contains(where: { $0.number.str == item.number.str }))
     }
 }
 
-private func calcurate(history: [Item], omomiWidth: OmomiWidth, rule: Rule, selectedItem: Item?) -> [ItemWithOmomi] {
+private func calcurate(history: [Item], weightWidth: WeightWidth, rule: Rule, selectedItem: Item?) -> [ItemWithWeight] {
     let rawData = history.flatMap { item in
-        weighting(item: item, omomiWidth: omomiWidth, rule: rule, selectedItem: selectedItem)
+        weighting(item: item, weightWidth: weightWidth, rule: rule, selectedItem: selectedItem)
     }
-    let result: [ItemWithOmomi] = []
-    let omomied = rawData.reduce(result) { result, current in
+    let result: [ItemWithWeight] = []
+    let weighted = rawData.reduce(result) { result, current in
         if let i = result.firstIndex(where: { $0.item.number.str == current.item.number.str }) {
             var result = result
-            result[i].omomi += current.omomi
+            result[i].weight += current.weight
             return result
         } else {
             return result + [current]
         }
     }
 
-    return omomied
+    return weighted
 }
 
-private func weighting(item: Item, omomiWidth: OmomiWidth, rule: Rule, selectedItem _: Item?) -> [ItemWithOmomi] {
+private func weighting(item: Item, weightWidth: WeightWidth, rule: Rule, selectedItem _: Item?) -> [ItemWithWeight] {
     let wheel = rule.wheel
 
     let i = wheel.firstIndex(where: { item.number.str == $0.number.str })!
 
-    return wheel.archSlice(offset: omomiWidth.offset, centerIndex: i) { item, offsetIndex -> ItemWithOmomi in
-        .init(item: item, omomi: omomiWidth.omomiFar(from: offsetIndex))
+    return wheel.archSlice(offset: weightWidth.offset, centerIndex: i) { item, offsetIndex -> ItemWithWeight in
+        .init(item: item, weight: weightWidth.weightFar(from: offsetIndex))
     }
 }
 
-private func candidate(omomiWidth: OmomiWidth, rule: Rule, selectedItem: Item?) -> [Item] {
+private func candidate(weightWidth: WeightWidth, rule: Rule, selectedItem: Item?) -> [Item] {
     guard let selectedItem else { return [] }
     let wheel = rule.wheel
 
     let i = wheel.firstIndex(where: { selectedItem.number.str == $0.number.str })!
-    return wheel.archSlice(offset: omomiWidth.offset, centerIndex: i) { item, _ in item }
+    return wheel.archSlice(offset: weightWidth.offset, centerIndex: i) { item, _ in item }
 }
 
-public extension Array where Element == ItemWithOmomi {
-    func searchFor(width: OmomiWidth, searchType: SearchType) -> ItemWithOmomi {
-        let item: ItemWithOmomi?
+public extension Array where Element == ItemWithWeight {
+    func searchFor(width: WeightWidth, searchType: SearchType) -> ItemWithWeight {
+        let item: ItemWithWeight?
         switch searchType {
         case .deepeset:
             item = max { lhs, rhs in
-                lhs.omomi < rhs.omomi
+                lhs.weight < rhs.weight
             }
         case .lightest:
             item = min { lhs, rhs in
-                lhs.omomi < rhs.omomi
+                lhs.weight < rhs.weight
             }
         }
 
         guard let item else { return self[0] }
 
         let indices: [Int] = zip(0 ..< count, self).compactMap { index, element in
-            element.omomi == item.omomi ? index : nil
+            element.weight == item.weight ? index : nil
         }
 
-        let areaItemsArray: [(index: Int, items: [ItemWithOmomi])] = indices.map { i in
+        let areaItemsArray: [(index: Int, items: [ItemWithWeight])] = indices.map { i in
             (index: i, items: self.archSlice(offset: width.offset, centerIndex: i) { item, _ in item })
         }
 
         switch searchType {
         case .deepeset:
-            let index = areaItemsArray.max(by: { $0.items.reduce(0) { $0 + $1.omomi } < $1.items.reduce(0) { $0 + $1.omomi } })?.index ?? 0
+            let index = areaItemsArray.max(by: { $0.items.reduce(0) { $0 + $1.weight } < $1.items.reduce(0) { $0 + $1.weight } })?.index ?? 0
             return self[index]
         case .lightest:
-            let index = areaItemsArray.min(by: { $0.items.reduce(0) { $0 + $1.omomi } < $1.items.reduce(0) { $0 + $1.omomi } })?.index ?? 0
+            let index = areaItemsArray.min(by: { $0.items.reduce(0) { $0 + $1.weight } < $1.items.reduce(0) { $0 + $1.weight } })?.index ?? 0
             return self[index]
         }
     }

@@ -86,15 +86,15 @@ public struct SettingView: View {
                     }
                 }
 
-                Picker("Prediction width", selection: settingsViewStore.binding(get: \.omomiWidthForPrediction, send: Setting.Action.changeOmomiForPrediction)) {
-                    ForEach(OmomiWidth.allCases, id: \.self) { omomi in
-                        Text(omomi.displayValue)
+                Picker("Prediction width", selection: settingsViewStore.binding(get: \.weightWidthForPrediction, send: Setting.Action.changeWeightForPrediction)) {
+                    ForEach(WeightWidth.allCases, id: \.self) { weight in
+                        Text(weight.displayValue)
                     }
                 }
 
-                Picker("History width", selection: settingsViewStore.binding(get: \.omomiWidthForHistory, send: Setting.Action.changeOmomiForHistory)) {
-                    ForEach(OmomiWidth.allCases, id: \.self) { omomi in
-                        Text(omomi.displayValue)
+                Picker("History width", selection: settingsViewStore.binding(get: \.weightWidthForHistory, send: Setting.Action.changeWeightForHistory)) {
+                    ForEach(WeightWidth.allCases, id: \.self) { weight in
+                        Text(weight.displayValue)
                     }
                 }
 

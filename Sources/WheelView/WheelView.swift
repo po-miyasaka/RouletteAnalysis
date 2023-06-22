@@ -14,7 +14,7 @@ import Roulette
 import Setting
 
 public struct WheelView: View {
-    typealias ItemWithOmomiAndAngle = (itemWithOmomi: ItemWithOmomi, angle: Angle)
+    typealias ItemWithWeightAndAngle = (itemWithWeight: ItemWithWeight, angle: Angle)
 
     @ObservedObject var rouletteViewStore: ViewStoreOf<Roulette>
     @ObservedObject var settingViewStore: ViewStoreOf<Setting>
@@ -32,11 +32,11 @@ public struct WheelView: View {
 
     let width: Double = 290
     
-    func angles(culucuratedData: [ItemWithOmomi]) -> [ItemWithOmomiAndAngle] {
+    func angles(culucuratedData: [ItemWithWeight]) -> [ItemWithWeightAndAngle] {
         let minAngle = Angle(degrees: -90)
         let maxAngle = Angle(degrees: 270)
         let tickDegrees = (maxAngle.degrees - minAngle.degrees) / Double(culucuratedData.count)
-        var result = [ItemWithOmomiAndAngle]()
+        var result = [ItemWithWeightAndAngle]()
 
         for tick in 0 ..< culucuratedData.count {
             let data = culucuratedData[tick]
@@ -52,13 +52,13 @@ public struct WheelView: View {
         
         let calucuratedData = wheelData(roulette: rouletteViewStore.state, setting: settingViewStore.state)
         let angles = angles(culucuratedData: calucuratedData)
-        let item = wheelViewStore.mode.searchType.flatMap { calucuratedData.searchFor(width: settingViewStore.omomiWidthForPrediction, searchType: $0) }
+        let item = wheelViewStore.mode.searchType.flatMap { calucuratedData.searchFor(width: settingViewStore.weightWidthForPrediction, searchType: $0) }
 
         Group {
             VStack(alignment: .center, spacing: 24) {
                 ZStack(alignment: .center) {
                     let tick = (Double(360) / Double(angles.count))
-                    ForEach(Array(angles.enumerated()), id: \.element.itemWithOmomi.item.number) { _, data in
+                    ForEach(Array(angles.enumerated()), id: \.element.itemWithWeight.item.number) { _, data in
                         rouletteNumbers(tick: tick, data: data)
                     }
 
@@ -85,8 +85,8 @@ public struct WheelView: View {
     }
 
     @ViewBuilder
-    func rouletteNumbers(tick: Double, data: ItemWithOmomiAndAngle) -> some View {
-        if data.itemWithOmomi.candidated {
+    func rouletteNumbers(tick: Double, data: ItemWithWeightAndAngle) -> some View {
+        if data.itemWithWeight.candidated {
             Path { path in
 
                 //                    path.addLines([CGPoint(x: width / 2, y: width / 2)])
@@ -101,7 +101,7 @@ public struct WheelView: View {
                 .foregroundColor(.orange)
                 .rotationEffect(data.angle - Angle(degrees: Double(0.5)), anchor: UnitPoint(x: 0.5, y: 1))
         }
-        if data.itemWithOmomi.item.number == rouletteViewStore.history.limitedHistory.last?.item.number {
+        if data.itemWithWeight.item.number == rouletteViewStore.history.limitedHistory.last?.item.number {
             Path { path in
 
                 //                    path.addLines([CGPoint(x: width / 2, y: width / 2)])
@@ -129,13 +129,13 @@ public struct WheelView: View {
             path.closeSubpath()
         }.offset(y: width / 2)
             .fill()
-            .foregroundColor(data.itemWithOmomi.item.color.value)
-            .opacity(Double(data.itemWithOmomi.omomi) / 100.0 + 0.01)
+            .foregroundColor(data.itemWithWeight.item.color.value)
+            .opacity(Double(data.itemWithWeight.weight) / 100.0 + 0.01)
 
             .rotationEffect(data.angle - Angle(degrees: Double(0.5)), anchor: UnitPoint(x: 0.5, y: 1))
             .onTapGesture {
-                print(data.itemWithOmomi.item.number.str)
-                wheelViewStore.send(.selectWithTap(data.itemWithOmomi.item))
+                print(data.itemWithWeight.item.number.str)
+                wheelViewStore.send(.selectWithTap(data.itemWithWeight.item))
             }
 
         Path { path in
@@ -159,13 +159,13 @@ public struct WheelView: View {
             }
             .rotationEffect(data.angle - Angle(degrees: Double(1)), anchor: UnitPoint(x: 0.5, y: 1))
             .onTapGesture {
-                print(data.itemWithOmomi.item.number.str)
-                wheelViewStore.send(.select(data.itemWithOmomi.item))
+                print(data.itemWithWeight.item.number.str)
+                wheelViewStore.send(.select(data.itemWithWeight.item))
             }
 
         VStack(alignment: .center) {
             Text(
-                data.itemWithOmomi.item.number.str)
+                data.itemWithWeight.item.number.str)
                 .frame(alignment: .center)
                 .font(.caption)
                 .foregroundColor(.black)
@@ -234,10 +234,10 @@ extension Angle: Identifiable {
     }
 }
 
-public func wheelData(roulette: Roulette.State, setting: Setting.State) -> [ItemWithOmomi] {
+public func wheelData(roulette: Roulette.State, setting: Setting.State) -> [ItemWithWeight] {
         makeWheelData(history: roulette.history.limitedHistory.map(\.item),
-                      omomiWidthForSelecting: setting.omomiWidthForPrediction,
-                      omomiWidthForHistory: setting.omomiWidthForHistory,
+                      weightWidthForSelecting: setting.weightWidthForPrediction,
+                      weightWidthForHistory: setting.weightWidthForHistory,
                       rule: setting.rule,
                       selectedItem: roulette.selectedForPrediction)
     

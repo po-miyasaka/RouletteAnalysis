@@ -53,7 +53,7 @@ public struct TableLayoutView: View {
     }
 
     @ViewBuilder
-    func makeLayoutCell(predictedData: [ItemWithOmomi], index: Int) -> some View {
+    func makeLayoutCell(predictedData: [ItemWithWeight], index: Int) -> some View {
         let item = predictedData[index]
         LayoutCell(isSelected: tableLayoutViewStore.selectedItemForAdding == item.item, data: item) { item in
 
@@ -73,8 +73,8 @@ public struct TableLayoutView: View {
 
 struct LayoutCell: View {
     let isSelected: Bool
-    let data: ItemWithOmomi
-    let tapAction: (ItemWithOmomi) -> Void
+    let data: ItemWithWeight
+    let tapAction: (ItemWithWeight) -> Void
 
     @ViewBuilder
     var body: some View {
@@ -82,7 +82,7 @@ struct LayoutCell: View {
             if data.candidated {
                 Color.orange.opacity(1)
             } else {
-//                data.item.color.value.opacity((Double(data.omomi) / 100.0) + 0.05)
+//                data.item.color.value.opacity((Double(data.weight) / 100.0) + 0.05)
                 data.item.color.value.opacity(0.1)
             }
             if isSelected { Color.accentColor }
@@ -99,11 +99,11 @@ struct LayoutCell: View {
 public func layoutData(
     roulette: Roulette.State,
     setting: Setting.State
-) -> [ItemWithOmomi] {
+) -> [ItemWithWeight] {
         makeLayoutData(
             history: roulette.history.limitedHistory.map(\.item),
-            omomiWidthForSelecting: setting.omomiWidthForPrediction,
-            omomiWidthForHistory: setting.omomiWidthForHistory,
+            weightWidthForSelecting: setting.weightWidthForPrediction,
+            weightWidthForHistory: setting.weightWidthForHistory,
             rule: setting.rule,
             selectedItem: roulette.selectedForPrediction
         )

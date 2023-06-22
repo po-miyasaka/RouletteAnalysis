@@ -21,20 +21,20 @@ public struct UserDefaultsClient {
     public var setDouble: @Sendable(Double, String) async -> Void
     public var setInteger: @Sendable(Int, String) async -> Void
 
-    public var omomiWidthForPrediction: String? {
-        stringForKey(omomiWidthForPredictionKey)
+    public var weightWidthForPrediction: String? {
+        stringForKey(weightWidthForPredictionKey)
     }
 
     public func setOmoiWidthForPrediction(_ value: String) async {
-        await setString(value, omomiWidthForPredictionKey)
+        await setString(value, weightWidthForPredictionKey)
     }
 
-    public var omomiWidthForHistory: String? {
-        stringForKey(omomiWidthForHistoryKey)
+    public var weightWidthForHistory: String? {
+        stringForKey(weightWidthForHistoryKey)
     }
 
     public func setOmoiWidthForHistory(_ value: String) async {
-        await setString(value, omomiWidthForHistoryKey)
+        await setString(value, weightWidthForHistoryKey)
     }
 
     public var defaultDisplayedHistoryLimit: Int? {
@@ -80,8 +80,8 @@ public struct UserDefaultsClient {
     }
 }
 
-let omomiWidthForPredictionKey = "omomiWidthForPredictionKey"
-let omomiWidthForHistoryKey = "omomiWidthForHistoryKey"
+let weightWidthForPredictionKey = "weightWidthForPredictionKey"
+let weightWidthForHistoryKey = "weightWidthForHistoryKey"
 let ruleKey = "ruleKey"
 let roulettesKey = "roulettesKey"
 let defaultDisplayedHistoryLimitKey = "defaultDisplayedHistoryLimitKey"
