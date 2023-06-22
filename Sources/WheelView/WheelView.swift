@@ -19,10 +19,14 @@ public struct WheelView: View {
     @ObservedObject var rouletteViewStore: ViewStoreOf<Roulette>
     @ObservedObject var settingViewStore: ViewStoreOf<Setting>
     @ObservedObject var wheelViewStore: ViewStoreOf<Wheel>
+    
     let rouletteStore: StoreOf<Roulette>
     let settingStore: StoreOf<Setting>
     
-    public init(rouletteStore: StoreOf<Roulette>, settingStore: StoreOf<Setting>) {
+    public init(
+        rouletteStore: StoreOf<Roulette>,
+        settingStore: StoreOf<Setting>
+    ) {
         self.rouletteViewStore = ViewStore(rouletteStore)
         self.settingViewStore = ViewStore(settingStore)
         self.rouletteStore = rouletteStore
@@ -44,7 +48,6 @@ public struct WheelView: View {
             //            print(angle.degrees)
             result.append((data, angle))
         }
-
         return result
     }
 

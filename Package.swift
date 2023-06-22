@@ -102,7 +102,6 @@ let package = Package(
         target(
             name: .AppView,
             dependencies: [
-                .Item,
                 .UserDefaultsClient,
                 .Tutorial,
                 .Feedback,
@@ -112,10 +111,7 @@ let package = Package(
                 .TableLayout,
                 .Roulette,
                 .SettingView,
-                .WheelView,
-                .TableLayoutView,
                 .RouletteView,
-                .HistoryView,
                 .other(composableArchitecture)
             ]
         ),
@@ -169,9 +165,7 @@ let package = Package(
                            .TableLayoutView,
                            .Roulette,
                            .HistoryView,
-                           .SettingView,
                            .WheelView,
-                           .App,
                            .other(composableArchitecture)]
         ),
         target(

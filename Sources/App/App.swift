@@ -10,7 +10,6 @@ import SwiftUI
 import UserDefaultsClient
 import Setting
 import Roulette
-import Item
 
 public struct AppFeature: ReducerProtocol {
     public init() {}
@@ -65,6 +64,8 @@ public struct AppFeature: ReducerProtocol {
                 }
             }
 
+            state.current.map{$0.id}
+            
             switch action {
             case .roulette:
                 break

@@ -11,6 +11,7 @@ import SwiftUI
 import UserDefaultsClient
 import Utility
 
+// TODO: SettingとしてRouletteの情報を外に出していることでアプリ全体では扱いにくくなってる感ある。基本は各Reducerにインジェクトしたい情報はdependenciesを使うのが意味的にも良いかもしれない。それ以外の設定をこのSettingに任せるとかがいいかも
 public struct Setting: ReducerProtocol {
     @Dependency(\.userDefaults) var userDefaults
     public init() {}
