@@ -6,7 +6,7 @@
 
 
 # Dependencies Graph
-Powerd by [ Ryu0118/swift-dependencies-graph](https://github.com/Ryu0118/swift-dependencies-graph) & [ChatGPT](https://chat.openai.com/?model=gpt-4)
+Powered by [ Ryu0118/swift-dependencies-graph](https://github.com/Ryu0118/swift-dependencies-graph) & [ChatGPT](https://chat.openai.com/?model=gpt-4)
 
 ```mermaid
 graph TB
