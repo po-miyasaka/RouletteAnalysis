@@ -22,7 +22,7 @@ public struct AppFeature: ReducerProtocol {
         public var activeSheet: ActiveSheet?
         public var roulettes: [Roulette.State] = []
         public var activeAlert: ActiveAlert?
-        
+
     }
 
     public enum Action: Equatable {
@@ -64,8 +64,8 @@ public struct AppFeature: ReducerProtocol {
                 }
             }
 
-            state.current.map{$0.id}
-            
+            state.current.map {$0.id}
+
             switch action {
             case .roulette:
                 break
@@ -162,7 +162,6 @@ public struct AppFeature: ReducerProtocol {
         })
     }
 
-    
     func roulettes() -> [Roulette.State] {
         guard let roulettesData = userDefaults.roulettes,
             let roulettes = try? JSONDecoder().decode([Roulette.State].self, from: roulettesData) else { return [] }

@@ -13,7 +13,6 @@ import Utility
 import Roulette
 import Setting
 
-
 public struct TableLayoutView: View {
 
     @ObservedObject var tableLayoutViewStore: ViewStoreOf<TableLayout>
@@ -21,7 +20,7 @@ public struct TableLayoutView: View {
     @ObservedObject var settingViewStore: ViewStoreOf<Setting>
     let rouletteStore: StoreOf<Roulette>
     let settingStore: StoreOf<Setting>
-    
+
     public init(rouletteStore: StoreOf<Roulette>, settingStore: StoreOf<Setting>) {
         self.rouletteViewStore = ViewStore(rouletteStore)
         self.settingViewStore = ViewStore(settingStore)
@@ -31,7 +30,7 @@ public struct TableLayoutView: View {
     }
 
     public var body: some View {
-        
+
         let predictedData = layoutData(roulette: rouletteViewStore.state, setting: settingViewStore.state)
         let zeroColumn = Array(repeating: GridItem(.flexible(), spacing: 3), count: settingViewStore.rule.zeroCount)
         let numbersColumn = Array(repeating: GridItem(.flexible(), spacing: 3), count: 3)

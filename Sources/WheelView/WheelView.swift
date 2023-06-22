@@ -19,10 +19,10 @@ public struct WheelView: View {
     @ObservedObject var rouletteViewStore: ViewStoreOf<Roulette>
     @ObservedObject var settingViewStore: ViewStoreOf<Setting>
     @ObservedObject var wheelViewStore: ViewStoreOf<Wheel>
-    
+
     let rouletteStore: StoreOf<Roulette>
     let settingStore: StoreOf<Setting>
-    
+
     public init(
         rouletteStore: StoreOf<Roulette>,
         settingStore: StoreOf<Setting>
@@ -35,7 +35,7 @@ public struct WheelView: View {
     }
 
     let width: Double = 290
-    
+
     func angles(culucuratedData: [ItemWithWeight]) -> [ItemWithWeightAndAngle] {
         let minAngle = Angle(degrees: -90)
         let maxAngle = Angle(degrees: 270)
@@ -52,7 +52,7 @@ public struct WheelView: View {
     }
 
     public var body: some View {
-        
+
         let calucuratedData = wheelData(roulette: rouletteViewStore.state, setting: settingViewStore.state)
         let angles = angles(culucuratedData: calucuratedData)
         let item = wheelViewStore.mode.searchType.flatMap { calucuratedData.searchFor(width: settingViewStore.weightWidthForPrediction, searchType: $0) }
@@ -243,6 +243,5 @@ public func wheelData(roulette: Roulette.State, setting: Setting.State) -> [Item
                       weightWidthForHistory: setting.weightWidthForHistory,
                       rule: setting.rule,
                       selectedItem: roulette.selectedForPrediction)
-    
-        
+
 }

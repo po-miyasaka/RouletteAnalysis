@@ -54,7 +54,7 @@ public struct RouletteView: View {
             rouletteViewStore.send(.onAppear)
         }
         .safeAreaInset(edge: .top, alignment: .center, spacing: 0) {
-            
+
             HistoryView(store: rouletteStore.historyStore).extend {
                     #if os(macOS)
                         $0.padding(.horizontal, 8)
@@ -62,8 +62,7 @@ public struct RouletteView: View {
                         $0
                     #endif
                 }
-            
-            
+
         }
         .extend {
             #if os(iOS)
@@ -89,7 +88,6 @@ public struct RouletteView: View {
 extension Bool: Identifiable {
     public var id: Bool { self }
 }
-
 
 public func layoutData(roulette: Roulette.State, setting: Setting.State) -> [ItemWithWeight] {
         makeLayoutData(

@@ -78,11 +78,11 @@ public struct Roulette: ReducerProtocol {
 }
 
 public struct ColorData: Equatable, Codable {
-    
+
     var red: Double = 0
     var blue: Double = 0
     var green: Double = 0
-    
+
     // Randomにしたいけどデザイン決まってないので保留
     public init(
 //        red: Double = 1 / Double((1 ... 10).randomElement() ?? 0),
@@ -110,11 +110,11 @@ public extension StoreOf<Roulette> {
             state: \.wheel,
             action: Roulette.Action.wheel)
     }
-    
+
     var tableLayoutStore: StoreOf<TableLayout> {
         scope(
             state: \.layout,
             action: Roulette.Action.layout)
     }
-    
+
 }

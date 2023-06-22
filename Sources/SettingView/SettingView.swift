@@ -118,9 +118,9 @@ public struct SettingView: View {
         }
         .extend {
 #if os(macOS)
-            
+
             $0.alert(item: settingsViewStore.binding(get: { $0.activeAlert }, send: { v in Setting.Action.alert(v) }), content: { alert in
-                
+
                 Alert(title: Text(alert.displayText), primaryButton:
                     .destructive(Text("Change")) {
                         if let rule = alert.rule { settingsViewStore.send(.changeRule(rule)) }
@@ -131,18 +131,18 @@ public struct SettingView: View {
             })
 #else
             $0.actionSheet(item: settingsViewStore.binding(get: { $0.activeAlert }, send: { v in Setting.Action.alert(v) }), content: { alert in
-                
+
                 ActionSheet(title: Text(alert.displayText), buttons: [
                     .destructive(Text("Change")) {
                         if let rule = alert.rule { settingsViewStore.send(.changeRule(rule)) }
                     },
-                    .cancel(),
+                    .cancel()
                 ])
 
             })
 #endif
         }
-        
+
     }
 
     @ViewBuilder

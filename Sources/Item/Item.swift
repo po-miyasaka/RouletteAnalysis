@@ -255,7 +255,7 @@ public enum Rule: String, CaseIterable {
         .init(number: .n23, color: .red),
         .init(number: .n35, color: .black),
         .init(number: .n14, color: .red),
-        .init(number: .n2, color: .black),
+        .init(number: .n2, color: .black)
     ]
 
     static var americanLayout: [Item] {
@@ -310,7 +310,7 @@ public enum Rule: String, CaseIterable {
         .init(number: .n12, color: .red),
         .init(number: .n35, color: .black),
         .init(number: .n3, color: .red),
-        .init(number: .n26, color: .black),
+        .init(number: .n26, color: .black)
     ]
 
     static var europeanLayout: [Item] {
