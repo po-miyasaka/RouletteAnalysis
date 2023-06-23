@@ -132,9 +132,7 @@ public struct FeedbackView: View {
                     header: Text("Request / Bug report / Inquery").font(.caption).foregroundColor(Color.gray),
                     footer:
                     Button(action: {
-                        Task.detached {
-                            viewStore.send(.submit)
-                        }
+                        viewStore.send(.submit)
                     }, label: {
                         HStack {
                             Spacer()
