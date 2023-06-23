@@ -400,11 +400,11 @@ public extension Array where Element == ItemWithWeight {
         let item: ItemWithWeight?
         switch searchType {
         case .deepeset:
-            item = max { lhs, rhs in
+            item = self.max { lhs, rhs in
                 lhs.weight < rhs.weight
             }
         case .lightest:
-            item = min { lhs, rhs in
+            item = self.min { lhs, rhs in
                 lhs.weight < rhs.weight
             }
         }

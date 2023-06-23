@@ -161,7 +161,6 @@ let package = Package(
                            .Wheel,
                            .History,
                            .Setting,
-                           .TableLayout,
                            .TableLayoutView,
                            .Roulette,
                            .HistoryView,

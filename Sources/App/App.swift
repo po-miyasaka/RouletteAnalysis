@@ -64,8 +64,6 @@ public struct AppFeature: ReducerProtocol {
                 }
             }
 
-            state.current.map {$0.id}
-
             switch action {
             case .roulette:
                 break
