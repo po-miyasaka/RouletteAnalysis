@@ -18,6 +18,7 @@
 		D542253B2A2186ED000A71A9 /* RouletteAnalysisApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouletteAnalysisApp.swift; sourceTree = "<group>"; };
 		D542253F2A2186EF000A71A9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D55F2A0B2A464DF5005C631F /* AppIcon.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = AppIcon.xcassets; sourceTree = "<group>"; };
+		D55F2A1A2A467599005C631F /* RouletteAnalysis.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RouletteAnalysis.entitlements; sourceTree = "<group>"; };
 		D5CA15C52A22156D000E9E48 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -56,6 +57,7 @@
 				D55F2A132A46512D005C631F /* Preview Content */,
 				D5CA15C52A22156D000E9E48 /* Info.plist */,
 				D542253B2A2186ED000A71A9 /* RouletteAnalysisApp.swift */,
+				D55F2A1A2A467599005C631F /* RouletteAnalysis.entitlements */,
 				D542253F2A2186EF000A71A9 /* Assets.xcassets */,
 				D55F2A0B2A464DF5005C631F /* AppIcon.xcassets */,
 			);
@@ -222,8 +224,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RouletteAnalysis/App/RouletteAnalysis;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"RouletteAnalysis/Preview Content\"";
 				DEVELOPMENT_TEAM = H6UU7923NK;
 				ENABLE_PREVIEWS = YES;
