@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D54225372A2186ED000A71A9"
-               BuildableName = "RouletteAnalysis.app"
+               BuildableName = "RA Staging.app"
                BlueprintName = "RouletteAnalysis"
                ReferencedContainer = "container:Staging.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D54225372A2186ED000A71A9"
-            BuildableName = "RouletteAnalysis.app"
+            BuildableName = "RA Staging.app"
             BlueprintName = "RouletteAnalysis"
             ReferencedContainer = "container:Staging.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D54225372A2186ED000A71A9"
-            BuildableName = "RouletteAnalysis.app"
+            BuildableName = "RA Staging.app"
             BlueprintName = "RouletteAnalysis"
             ReferencedContainer = "container:Staging.xcodeproj">
          </BuildableReference>
