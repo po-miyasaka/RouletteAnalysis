@@ -9,13 +9,22 @@ import ComposableArchitecture
 import AppView
 import App
 import SwiftUI
+
+
 #if os(macOS)
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_: Notification) {
+//        FirebaseApp.configure()
+    }
+
+}
 #else
     final class AppDelegate: NSObject, UIApplicationDelegate {
         func application(
             _: UIApplication,
             didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
         ) -> Bool {
+//            FirebaseApp.configure()
             return true
         }
     
@@ -25,6 +34,7 @@ import SwiftUI
 @main
 struct RouletteAnalysisApp: App {
     #if os(macOS)
+        @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     #else
         @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     #endif

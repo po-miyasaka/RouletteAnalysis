@@ -13,6 +13,7 @@ import App
 import Setting
 import SettingView
 import RouletteView
+//@_exported import FirebaseCore
 
 public struct AppView: View {
     let store: StoreOf<AppFeature>
