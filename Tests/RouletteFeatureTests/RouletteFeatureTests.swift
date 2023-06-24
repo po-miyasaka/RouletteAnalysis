@@ -120,8 +120,8 @@ final class RouletteAnalysisTests: XCTestCase {
 extension DependencyValues {
     mutating func firstLaunching() {
         userDefaults.override(bool: false, forKey: didFirstLaunchKey)
-        userDefaults.override(integer: 5, forKey: omomiWidthForHistoryKey)
-        userDefaults.override(integer: 7, forKey: omomiWidthForPredictionKey)
+        userDefaults.override(integer: 5, forKey: weightWidthForHistoryKey)
+        userDefaults.override(integer: 7, forKey: weightWidthForPredictionKey)
         userDefaults.override(string: "the star", forKey: ruleKey)
         userDefaults.override(data: Data(), forKey: roulettesKey)
         userDefaults.override(string: "tab", forKey: screenLayoutKey)
@@ -129,8 +129,8 @@ extension DependencyValues {
 
     mutating func finishLaunchingAfterTheSecondTime() {
         userDefaults.override(bool: true, forKey: didFirstLaunchKey)
-        userDefaults.override(integer: 5, forKey: omomiWidthForHistoryKey)
-        userDefaults.override(integer: 7, forKey: omomiWidthForPredictionKey)
+        userDefaults.override(integer: 5, forKey: weightWidthForHistoryKey)
+        userDefaults.override(integer: 7, forKey: weightWidthForPredictionKey)
         userDefaults.override(string: "the star", forKey: ruleKey)
         
 //        Roulette.State()

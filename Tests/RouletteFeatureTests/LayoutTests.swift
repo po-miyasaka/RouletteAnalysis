@@ -20,9 +20,9 @@ final class LayoutTests: XCTestCase {
         })
         
         let item = Item(number: .n0, color: .black)
-        let itemWithOmomi = ItemWithOmomi(item: item, omomi: 9)
-        await layoutStore.send(.select(itemWithOmomi)) {
-            $0.selectedItemForAdding = itemWithOmomi.item
+        let itemWithWeight = ItemWithWeight(item: item, weight: 9)
+        await layoutStore.send(.select(itemWithWeight)) {
+            $0.selectedItemForAdding = itemWithWeight.item
         }
     }
 }
