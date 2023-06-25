@@ -6,7 +6,7 @@
 //
 
 import ComposableArchitecture
-import AppView
+@_exported import AppView
 import App
 import SwiftUI
 
@@ -14,7 +14,7 @@ import SwiftUI
 #if os(macOS)
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_: Notification) {
-//        FirebaseApp.configure()
+        FirebaseApp.configure()
     }
 
 }
@@ -24,7 +24,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             _: UIApplication,
             didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
         ) -> Bool {
-//            FirebaseApp.configure()
+            FirebaseApp.configure()
             return true
         }
     

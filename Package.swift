@@ -11,10 +11,6 @@ let firebaseCrashlytics: Target.Dependency = .product(
     name: "FirebaseCrashlytics",
     package: "firebase-ios-sdk"
 )
-let firebaseCore: Target.Dependency = .product(
-    name: "FirebaseCore",
-    package: "firebase-ios-sdk"
-)
 
 enum TargetName {
     case APIClient
@@ -125,8 +121,7 @@ let package = Package(
                 .SettingView,
                 .RouletteView,
                 .other(composableArchitecture),
-                .other(firebaseCrashlytics),
-//                .other(firebaseCore)
+                .other(firebaseCrashlytics)
             ]
         ),
         target(

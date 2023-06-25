@@ -60,7 +60,7 @@ public struct HistoryView: View {
                         value: viewStore.binding(
                             get: { $0.displayLimit },
                             send: { value in
-                                History.Action.change(value)
+                                return History.Action.change(value)
                             }
                         ),
                         in: 0 ... Double(max(viewStore.items.count, 1)),

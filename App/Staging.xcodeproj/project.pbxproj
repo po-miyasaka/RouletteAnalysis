@@ -11,6 +11,7 @@
 		D54225402A2186EF000A71A9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D542253F2A2186EF000A71A9 /* Assets.xcassets */; };
 		D55F2A0C2A464DF5005C631F /* AppIcon.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D55F2A0B2A464DF5005C631F /* AppIcon.xcassets */; };
 		D57833932A41B76400AF12F0 /* AppView in Frameworks */ = {isa = PBXBuildFile; productRef = D57833922A41B76400AF12F0 /* AppView */; };
+		D5DB85132A47C536005D1753 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D5DB85122A47C536005D1753 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +21,7 @@
 		D55F2A0B2A464DF5005C631F /* AppIcon.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = AppIcon.xcassets; sourceTree = "<group>"; };
 		D55F2A1A2A467599005C631F /* RouletteAnalysis.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RouletteAnalysis.entitlements; sourceTree = "<group>"; };
 		D5CA15C52A22156D000E9E48 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D5DB85122A47C536005D1753 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +39,7 @@
 		D542252F2A2186ED000A71A9 = {
 			isa = PBXGroup;
 			children = (
+				D5DB85122A47C536005D1753 /* GoogleService-Info.plist */,
 				D542253A2A2186ED000A71A9 /* RouletteAnalysis */,
 				D54225392A2186ED000A71A9 /* Products */,
 				D542254C2A218DF2000A71A9 /* Frameworks */,
@@ -88,6 +91,7 @@
 				D54225342A2186ED000A71A9 /* Sources */,
 				D54225352A2186ED000A71A9 /* Frameworks */,
 				D54225362A2186ED000A71A9 /* Resources */,
+				D5DB85112A47C3B4005D1753 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -140,11 +144,32 @@
 			buildActionMask = 2147483647;
 			files = (
 				D54225402A2186EF000A71A9 /* Assets.xcassets in Resources */,
+				D5DB85132A47C536005D1753 /* GoogleService-Info.plist in Resources */,
 				D55F2A0C2A464DF5005C631F /* AppIcon.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D5DB85112A47C3B4005D1753 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\necho  \"{BUILD_DIR%/Build/*} is \" \necho  ${BUILD_DIR%/Build/*}\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D54225342A2186ED000A71A9 /* Sources */ = {
@@ -224,9 +249,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = RouletteAnalysis/App/RouletteAnalysis;
+				CODE_SIGN_ENTITLEMENTS = RouletteAnalysis/RouletteAnalysis.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"RouletteAnalysis/Preview Content\"";
 				DEVELOPMENT_TEAM = H6UU7923NK;
 				ENABLE_PREVIEWS = YES;

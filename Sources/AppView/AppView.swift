@@ -13,7 +13,7 @@ import App
 import Setting
 import SettingView
 import RouletteView
-//@_exported import FirebaseCore
+@_exported import FirebaseCore // Main側でFirebaseをimportせずに使えるようにするためにこちら側からexport
 
 public struct AppView: View {
     let store: StoreOf<AppFeature>
