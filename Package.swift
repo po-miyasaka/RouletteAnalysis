@@ -12,8 +12,15 @@ let firebaseCrashlytics: Target.Dependency = .product(
     package: "firebase-ios-sdk"
 )
 
+let googleMobileAds: Target.Dependency = .product(
+    name: "GoogleMobileAds",
+    package: "swift-package-manager-google-mobile-ads",
+    condition: .when(platforms: [.iOS])
+)
+
 enum TargetName {
     case APIClient
+    case Ad
     case App
     case AppView
     case Feedback
@@ -81,8 +88,11 @@ enum TargetName {
             return "Wheel"
         case .WheelView:
             return "WheelView"
+        case .Ad:
+            return "Ad"
         case .other:
             return nil
+
         }
     }
 }
@@ -90,19 +100,27 @@ enum TargetName {
 
 let package = Package(
     name: "RouletteFeature",
-    platforms: [.iOS(SupportedPlatform.IOSVersion.v16), .macOS(.v13)],
+    platforms: [
+        .iOS(.v16),
+        .macOS(.v13)
+    ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: TargetName.AppView.nameString!,
             targets: [TargetName.AppView.nameString!]
-        )
+        ),
+        .library(
+            name: TargetName.Ad.nameString!,
+            targets: [TargetName.Ad.nameString!]
+        ) // これ自体があってもMacでビルドできる。
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", .upToNextMajor(from: "0.53.2")),
-        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "10.4.0")
+        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "10.4.0"),
+        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", from: "10.6.0") // これ自体があってもMacでビルドできる。
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -147,6 +165,11 @@ let package = Package(
                            .Item,
                            .other(composableArchitecture)]
         ),
+        
+        target(
+            name: .Ad,
+            dependencies: [.other(googleMobileAds)]
+        ), // このtarget自体はMacOSのビルドに影響しない
         target(
             name: .SettingView,
             dependencies: [
@@ -154,6 +177,7 @@ let package = Package(
                            .Setting,
                            .Tutorial,
                            .Feedback,
+//                           .Ad, // AdはmobileAdsに依存しておりMacではビルドできないため、xcodeproj側でframeworkとしてimportしている。ファイル内ではcanImport(SettingView)をつかいimportしている。Package.swift側でMac or iOSで分岐できるような機能は見つからなかった。(whenもうまく機能しなかった。)また、xcodeprojのframework設定でiOSのみを設定しているのにも関わらずMacビルド時にエラーが発生したのでxcodeproj自体をMacとiOSで分ける必要があった。
                            .other(composableArchitecture)]
         ),
         target(
@@ -174,6 +198,7 @@ let package = Package(
                            .Roulette,
                            .HistoryView,
                            .WheelView,
+//                           .Ad,
                            .other(composableArchitecture)]
         ),
         target(

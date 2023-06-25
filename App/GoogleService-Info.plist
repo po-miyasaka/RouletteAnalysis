@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>GOOGLE_APP_ID</key>
-	<string>This is dummy GoogleService-Info</string>
+	<string>dummy</string>
 </dict>
 </plist>

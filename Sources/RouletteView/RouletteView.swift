@@ -13,6 +13,9 @@ import Setting
 import HistoryView
 import WheelView
 import TableLayoutView
+#if canImport(Ad)
+import Ad
+#endif
 
 public struct RouletteView: View {
 
@@ -39,11 +42,17 @@ public struct RouletteView: View {
                 if settingViewStore.screenLayout == .tab {
                     TabView {
                         mainContents
+                        #if canImport(Ad)
+                        AdBannerView(place: .rouletteTab).background(.gray)
+                        #endif
                     }.tabViewStyle(PageTabViewStyle(indexDisplayMode: .always)) // this makes it a paging scroll view
                         .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
                 } else {
                     ScrollView {
                         mainContents
+                        #if canImport(Ad)
+                        AdBannerView(place: .rouletteTab).frame(width: 320, height: 500).background(.gray)
+                        #endif
                     }
                 }
 

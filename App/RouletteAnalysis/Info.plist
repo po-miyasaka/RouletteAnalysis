@@ -2,7 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-6326437184905669~2294972064</string>
 	<key>NSRequiresAquaSystemAppearance</key>
 	<true/>
+	<key>roulette_tab</key>
+	<string>ca-app-pub-6326437184905669/1610330374</string>
+	<key>setting_bottom</key>
+	<string>ca-app-pub-6326437184905669/6995299249</string>
 </dict>
 </plist>

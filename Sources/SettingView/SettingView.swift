@@ -12,6 +12,9 @@ import SwiftUI
 import Tutorial
 import Utility
 import Setting
+#if canImport(Ad)
+import Ad
+#endif
 
 public struct SettingView: View {
     // 汎用的なSettingにViewのロジックが含まれないようにするために試しに専用のReducerをつくってみた。
@@ -72,7 +75,14 @@ public struct SettingView: View {
             }
 
         #else
-            NavigationView { form().formStyle(GroupedFormStyle()) }
+            NavigationView {
+                VStack {
+                    form().formStyle(GroupedFormStyle())
+            #if canImport(Ad)
+                    AdBannerView(place: .settingBottom).background(.gray)
+            #endif
+                }
+            }
         #endif
     }
 
