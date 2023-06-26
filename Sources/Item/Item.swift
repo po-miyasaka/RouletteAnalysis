@@ -10,7 +10,7 @@ import SwiftUI
 public struct Item: Identifiable, Equatable, Codable {
     
     public var id: UUID
-    public let number: Number
+    public let number:        Number
     public let color: Color
 
     public init(number: Number, color: Color, id: UUID = UUID()) {
