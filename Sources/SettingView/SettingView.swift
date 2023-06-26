@@ -15,7 +15,6 @@ import Setting
 #if canImport(Ad)
 import Ad
 #endif
- 
 
 public struct SettingView: View {
     // 汎用的なSettingにViewのロジックが含まれないようにするために試しに専用のReducerをつくってみた。
