@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D539219A2A49C0C000B7F588 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D53921992A49C0C000B7F588 /* Preview Assets.xcassets */; };
 		D542253C2A2186ED000A71A9 /* RouletteAnalysisApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D542253B2A2186ED000A71A9 /* RouletteAnalysisApp.swift */; };
 		D54225402A2186EF000A71A9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D542253F2A2186EF000A71A9 /* Assets.xcassets */; };
 		D55F2A0C2A464DF5005C631F /* AppIcon.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D55F2A0B2A464DF5005C631F /* AppIcon.xcassets */; };
@@ -15,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D53921992A49C0C000B7F588 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D54225382A2186ED000A71A9 /* RA Staging.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RA Staging.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D542253B2A2186ED000A71A9 /* RouletteAnalysisApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouletteAnalysisApp.swift; sourceTree = "<group>"; };
 		D542253F2A2186EF000A71A9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -36,6 +38,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D53921982A49C0C000B7F588 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				D53921992A49C0C000B7F588 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
 		D542252F2A2186ED000A71A9 = {
 			isa = PBXGroup;
 			children = (
@@ -57,7 +67,7 @@
 		D542253A2A2186ED000A71A9 /* RouletteAnalysis */ = {
 			isa = PBXGroup;
 			children = (
-				D55F2A132A46512D005C631F /* Preview Content */,
+				D53921982A49C0C000B7F588 /* Preview Content */,
 				D5CA15C52A22156D000E9E48 /* Info.plist */,
 				D542253B2A2186ED000A71A9 /* RouletteAnalysisApp.swift */,
 				D55F2A1A2A467599005C631F /* RouletteAnalysis.entitlements */,
@@ -72,13 +82,6 @@
 			children = (
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		D55F2A132A46512D005C631F /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -143,6 +146,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D539219A2A49C0C000B7F588 /* Preview Assets.xcassets in Resources */,
 				D54225402A2186EF000A71A9 /* Assets.xcassets in Resources */,
 				D5DB85132A47C536005D1753 /* GoogleService-Info.plist in Resources */,
 				D55F2A0C2A464DF5005C631F /* AppIcon.xcassets in Resources */,

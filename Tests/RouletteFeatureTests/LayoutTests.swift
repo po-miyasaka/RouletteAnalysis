@@ -8,6 +8,8 @@
 import ComposableArchitecture
 import Item
 @testable import TableLayout
+@testable import Roulette
+@testable import History
 import XCTest
 
 @MainActor
@@ -25,58 +27,53 @@ final class LayoutTests: XCTestCase {
             $0.selectedItemForAdding = itemWithWeight.item
         }
     }
-}
+    
     
     // ViewStateをテストするためには依存元の環境自体を作り込む必要がありそう。
-    // TestはStoreに指定StateとActionをテストするもん。
-//    func testSelectNumber_aroundApp() async throws {
-//        let appStore =
-//        TestStore(initialState: .init()) {
-//            AppFeature()
-//        } withDependencies: {
-//            $0.finishLaunchingAfterTheSecondTime()
-//            $0.uuid = UUIDGenerator { UUID(1) }
-//        }
-//        // TODO: Fix for the following warning
-//        // 'scope(state:)' is deprecated: Use 'TestStore.init(initialState:reducer:observe:)' to scope a test store's state.
-//        
-//        await appStore.send(.onAppear)
-//        
-//        let rouletteStore = appStore.scope(
-//            state: {
-//                
-//                RouletteView.ViewState(roulette: $0.current!, settings: $0.settings)
-//            }
-//        )
-//        
-//        let layoutStore =  rouletteStore.scope(
-//            state: {
-//                LayoutView.ViewState(
-//                                    rule: $0.settings.rule,
-//                                    predictedData: $0.layoutData,
-//                                    selectedItem: $0.roulette.layout.selectedItemForAdding,
-//                                    lastItem: nil
-//                                )
-//                
-//            }
-//        )
-//        
-//        let item = Item(number: .n0, color: .black)
-//        let itemWithOmomi = ItemWithOmomi(item: item, omomi: 9)
-//        await layoutStore.send(.roulette(.layout(.select(itemWithOmomi)))) {
-//            $0.selectedItem = itemWithOmomi.item
-//        }
-//        
-//        await layoutStore.send(.roulette(.layout(.select(itemWithOmomi))))
-//        await layoutStore.receive(.roulette( .layout(.add(itemWithOmomi)))) {
-//            $0.selectedItem = nil
-//        }
-//        await layoutStore.receive(.roulette( .history(.add(item, isHit: false)))) {
-//            $0.predictedData[0].omomi = 8
-//            $0.predictedData[4].omomi = 6
-//            $0.predictedData[16].omomi = 6
-//            $0.predictedData[27].omomi = 7
-//            $0.predictedData[33].omomi = 7
-//        }
-//    }
-//}
+    // TestはStoreに指定StateとActionをテストするもの。
+    
+    func testAddNumber_aroundRoulette() async throws {
+        
+        let uuid = UUID(1)
+        let rouletteStore = TestStore(initialState: .init(id: uuid), reducer: Roulette.init, withDependencies: {
+            $0.uuid = UUIDGenerator({uuid})
+        })
+        let item: ItemWithWeight = .init(item: .init(number: .n0, color: .green, id: uuid), weight: 1)
+        await rouletteStore.send(.layout(.select(.init(item: item.item, weight: 1)))) {
+            $0.layout.selectedItemForAdding = item.item
+        }
+        
+        await rouletteStore.send(.layout(.select(.init(item: item.item, weight: 1))))
+        await rouletteStore.receive(.layout(.add(item))) {
+            $0.layout.selectedItemForAdding = nil
+        }
+        await rouletteStore.receive(.history(.add(item.item, isHit: false))) {
+            var state = History.State()
+            state.items = [.init(item: item.item, isHit: false)]
+            $0.history = state
+        }
+        let uuid2 = UUID(2)
+        rouletteStore.dependencies.uuid = UUIDGenerator({uuid2})
+        var item2 = item
+        item2.item.id = uuid2
+        await rouletteStore.send(.layout(.select(.init(item: item2.item, weight: 1)))) {
+            $0.layout.selectedItemForAdding = item2.item
+        }
+        await rouletteStore.send(.layout(.select(.init(item: item2.item, weight: 1, candidated: true))))
+        await rouletteStore.receive(.layout(.add(.init(item: item2.item, weight: item2.weight, candidated: true)))) {
+            $0.layout.selectedItemForAdding = nil
+        }
+        
+        await rouletteStore.receive(.history(.add(item2.item, isHit: true))) {
+            var state = History.State()
+            state.items = [
+                .init(item: item.item, isHit: false),
+                .init(item: item2.item, isHit: true)
+            ]
+            $0.history = state
+        }
+        
+        
+        
+    }
+}

@@ -38,16 +38,8 @@ enum TargetName {
     case Utility
     case Wheel
     case WheelView
+    case RouletteFeatureTests
     case other(Target.Dependency)
-    var dependency: Target.Dependency {
-        if let nameString = self.nameString {
-            return Target.Dependency(stringLiteral: nameString)
-        } else if case .other(let element) = self {
-            return element
-        } else {
-            fatalError("owata")
-        }
-    }
     
     var nameString: String? {
         switch self {
@@ -90,9 +82,22 @@ enum TargetName {
             return "WheelView"
         case .Ad:
             return "Ad"
+        case .RouletteFeatureTests:
+            return "RouletteFeatureTests"
         case .other:
             return nil
 
+        }
+        
+    }
+    
+    var dependency: Target.Dependency {
+        if let nameString = self.nameString {
+            return Target.Dependency(stringLiteral: nameString)
+        } else if case .other(let element) = self {
+            return element
+        } else {
+            fatalError("owata")
         }
     }
 }
@@ -116,11 +121,9 @@ let package = Package(
         ) // これ自体があってもMacでビルドできる。
     ],
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", .upToNextMajor(from: "0.53.2")),
-        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "10.4.0"),
-        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", from: "10.6.0") // これ自体があってもMacでビルドできる。
+        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .upToNextMajor(from: "10.4.0")),
+        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", .upToNextMajor(from: "10.6.0")) // これ自体があってもMacでビルドできる。
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -270,10 +273,10 @@ let package = Package(
                 .other(composableArchitecture)
             ]
         ),
-        .testTarget(
-            name: "RouletteFeatureTests",
-            dependencies: ["AppView",
-                           composableArchitecture]
+        testTarget(
+            name: .RouletteFeatureTests,
+            dependencies: [.AppView,
+                           .other(composableArchitecture)]
         )
     ]
 )
@@ -282,6 +285,11 @@ let package = Package(
 func target(name: TargetName, dependencies: [TargetName] = []) -> Target {
     let dependencies = dependencies.map(\.dependency)
     return .target(name: name.nameString ?? "", dependencies: dependencies)
+}
+
+func testTarget(name: TargetName, dependencies: [TargetName] = []) -> Target {
+    let dependencies = dependencies.map(\.dependency)
+    return .testTarget(name: name.nameString ?? "", dependencies: dependencies)
 }
 
 //func library(target: TargetName, dependencies: [TargetName] = [], others: [Array<Target.Dependency>.ArrayLiteralElement] ) -> Product {

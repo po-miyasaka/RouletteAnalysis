@@ -5,15 +5,12 @@
 //  Created by po_miyasaka on 2023/06/25.
 //
 
-
-
 import SwiftUI
-
 
 public enum Place: String {
     case settingBottom = "setting_bottom"
     case rouletteTab = "roulette_tab"
-    
+
     var adUnitID: String? {
         guard let dictionary = Bundle.main.infoDictionary,
               let id = dictionary[self.rawValue] as? String else {
@@ -33,15 +30,14 @@ import UIKit
 
 public struct AdBannerView: UIViewRepresentable {
 
-
     let delegate = Delegate()
 
     let place: Place
-    
+
     public init(place: Place) {
         self.place = place
     }
-    
+
     public func makeUIView(context: Context) -> UIView {
 
         let view = GADBannerView(adSize: GADAdSizeBanner)
@@ -52,16 +48,15 @@ public struct AdBannerView: UIViewRepresentable {
         view.rootViewController = UIApplication.shared.windows.first?.rootViewController
         return view
 
-        
     }
-    
+
     public func updateUIView(_ uiView: UIView, context: Context) {}
-    
+
     class Delegate: NSObject, GADBannerViewDelegate {
         func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
             print("bannerViewDidReceiveAd")
         }
-        
+
         func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
             print("bannerView:didFailToReceiveAdWithError: \(error.localizedDescription)")
         }
@@ -71,7 +66,7 @@ public struct AdBannerView: UIViewRepresentable {
 #else
 
 public struct AdBannerView: View {
-    
+
     let place: Place
     public init(place: Place) {
         self.place = place
