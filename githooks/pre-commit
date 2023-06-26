@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# please copy this file to .git/hooks
+
+# Define the path to the Sources folder
+sources_path="./Sources/"
+
+# Check if SwiftFormat is installed
+command -v swiftformat >/dev/null 2>&1 || { echo >&2 "SwiftFormat not installed. Aborting."; exit 1; }
+
+# Check if cSpell is installed
+command -v cspell >/dev/null 2>&1 || { echo >&2 "cSpell not installed. Aborting."; exit 1; }
+
+# Get staged Swift files in the Sources folder
+staged_files=$(git diff --cached --name-only --diff-filter=d | grep "^$sources_path.*\.swift$")
+
+# Exit if no Swift files are staged
+if [ -z "$staged_files" ]; then
+    echo "No Swift files staged."
+    exit 0
+fi
+
+# Loop over staged files and run SwiftFormat and cSpell
+for file in $staged_files; do
+    # Run SwiftFormat
+    swiftformat_result=$(swiftformat --lint "$file")
+    if [ -n "$swiftformat_result" ]; then
+        echo "SwiftFormat found style violations in $file:"
+        echo "$swiftformat_result"
+        exit 1
+    fi
+
+    # Run cSpell
+    cspell_result=$(cspell "$file")
+    if [ -n "$cspell_result" ]; then
+        echo "cSpell found spelling errors in $file:"
+        echo "$cspell_result"
+        exit 1
+    fi
+done
+
+# If no errors, then exit with status 0 (success)
+exit 0
