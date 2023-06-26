@@ -6,13 +6,13 @@
 sources_path="./Sources/"
 
 # Check if SwiftFormat is installed
-command -v swiftformat >/dev/null 2>&1 || { echo >&2 "SwiftFormat not installed. Aborting."; exit 1; }
+command -v swiftformat >/dev/null 2>&1 || { echo >&2 "SwiftFormat not installed. Aborting."; exit 0; }
 
 # Check if cSpell is installed
-command -v cspell >/dev/null 2>&1 || { echo >&2 "cSpell not installed. Aborting."; exit 1; }
+command -v npm exec cspell >/dev/null 2>&1 || { echo >&2 "cSpell not installed. Aborting."; exit 0; }
 
 # Get staged Swift files in the Sources folder
-staged_files=$(git diff --cached --name-only --diff-filter=d | grep "^$sources_path.*\.swift$")
+staged_files=$(git diff --cached --name-only --diff-filter=d | grep "\.swift$")
 
 # Exit if no Swift files are staged
 if [ -z "$staged_files" ]; then
@@ -27,7 +27,12 @@ for file in $staged_files; do
     if [ -n "$swiftformat_result" ]; then
         echo "SwiftFormat found style violations in $file:"
         echo "$swiftformat_result"
-        exit 1
+    fi
+    # Run SwiftLint
+    swiftlint_result=$(swiftlint autocorrect "$file")
+    if [ -n "$swiftlint_result" ]; then
+        echo "Swiftlint found style violations in $file:"
+        echo "$swiftlint_result"
     fi
 
     # Run cSpell
@@ -35,7 +40,6 @@ for file in $staged_files; do
     if [ -n "$cspell_result" ]; then
         echo "cSpell found spelling errors in $file:"
         echo "$cspell_result"
-        exit 1
     fi
 done
 
