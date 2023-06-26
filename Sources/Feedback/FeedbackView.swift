@@ -20,6 +20,7 @@ public struct FeedbackFeature: ReducerProtocol {
         public init() {}
     }
 
+    
     public enum Action {
         case changeAddress(String)
         case changeContent(String)

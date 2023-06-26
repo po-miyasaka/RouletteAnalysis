@@ -19,6 +19,7 @@ import Ad
 
 public struct RouletteView: View {
 
+    
     @ObservedObject var rouletteViewStore: ViewStoreOf<Roulette>
     @ObservedObject var settingViewStore: ViewStoreOf<Setting>
     let rouletteStore: StoreOf<Roulette>

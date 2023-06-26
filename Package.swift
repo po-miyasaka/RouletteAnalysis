@@ -144,6 +144,7 @@ let package = Package(
                 .other(composableArchitecture),
                 .other(firebaseCrashlytics)
             ]
+            
         ),
         target(
             name: .Item

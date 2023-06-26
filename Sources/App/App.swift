@@ -167,6 +167,7 @@ public struct AppFeature: ReducerProtocol {
     }
 }
 
+
 public extension StoreOf<AppFeature> {
     var settingStore: StoreOf<Setting> {
         scope(state: \.settings, action: AppFeature.Action.settings)

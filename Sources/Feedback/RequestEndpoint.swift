@@ -18,6 +18,7 @@ public struct FeedbackData: Codable {
 
 
 
+
 public struct FeedbackEndpoint: Endpoint {
     public typealias ResponseData = Void
     public init(data: FeedbackData) {

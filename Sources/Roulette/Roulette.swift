@@ -22,6 +22,7 @@ public struct Roulette: ReducerProtocol {
             self.id = id
             self.color = color
         }
+        
 
         public var id: UUID
         public var color: ColorData

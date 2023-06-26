@@ -19,6 +19,7 @@ public struct Item: Identifiable, Equatable, Codable {
         self.id = id
     }
 
+    
     public static func  make(_ number: Number, rule: Rule = .tripleZero) -> Self {
         let item = rule.wheel.first(where: { $0.number == number })!
         return item
