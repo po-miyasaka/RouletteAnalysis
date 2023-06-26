@@ -21,7 +21,7 @@ public struct TableLayout: ReducerProtocol {
         case select(ItemWithWeight)
         case add(ItemWithWeight)
     }
-
+ 
     public func reduce(into state: inout State, action: Action) -> ComposableArchitecture.EffectTask<Action> {
         switch action {
         case let .select(item):
