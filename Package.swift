@@ -40,10 +40,10 @@ enum TargetName {
     case WheelView
     case RouletteFeatureTests
     case other(Target.Dependency)
-    
+
     var nameString: String? {
         switch self {
-            
+
         case .APIClient:
             return "APIClient"
         case .App:
@@ -88,9 +88,9 @@ enum TargetName {
             return nil
 
         }
-        
+
     }
-    
+
     var dependency: Target.Dependency {
         if let nameString = self.nameString {
             return Target.Dependency(stringLiteral: nameString)
@@ -101,7 +101,6 @@ enum TargetName {
         }
     }
 }
-
 
 let package = Package(
     name: "RouletteFeature",
@@ -144,7 +143,7 @@ let package = Package(
                 .other(composableArchitecture),
                 .other(firebaseCrashlytics)
             ]
-            
+
         ),
         target(
             name: .Item
@@ -162,14 +161,14 @@ let package = Package(
             name: .Tutorial,
             dependencies: [.Utility]
         ),
-        
+
         target(
             name: .Setting,
             dependencies: [.UserDefaultsClient,
                            .Item,
                            .other(composableArchitecture)]
         ),
-        
+
         target(
             name: .Ad,
             dependencies: [.other(googleMobileAds)]
@@ -281,7 +280,6 @@ let package = Package(
         )
     ]
 )
-
 
 func target(name: TargetName, dependencies: [TargetName] = []) -> Target {
     let dependencies = dependencies.map(\.dependency)

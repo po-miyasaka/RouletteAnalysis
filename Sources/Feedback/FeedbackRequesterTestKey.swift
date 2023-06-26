@@ -15,4 +15,3 @@ extension FeedbackRequester: TestDependencyKey {
         }
     }()
 }
-

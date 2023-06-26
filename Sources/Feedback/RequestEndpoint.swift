@@ -15,10 +15,6 @@ public struct FeedbackData: Codable {
     var appName: String = "RouletteAnalysis"
 }
 
-
-
-
-
 public struct FeedbackEndpoint: Endpoint {
     public typealias ResponseData = Void
     public init(data: FeedbackData) {
