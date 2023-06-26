@@ -15,8 +15,8 @@ public struct TableLayout: ReducerProtocol {
         public var selectedItemForAdding: Item?
         public init() {}
     }
-    
 
+    
     public enum Action: Equatable {
         case select(ItemWithWeight)
         case add(ItemWithWeight)

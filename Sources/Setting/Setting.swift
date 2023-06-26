@@ -47,6 +47,7 @@ public struct Setting: ReducerProtocol {
             }
         }
 
+        
         public var rule: Rule? {
             switch self {
             case let .change(rule):

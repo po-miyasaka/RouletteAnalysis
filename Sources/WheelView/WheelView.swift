@@ -23,6 +23,7 @@ public struct WheelView: View {
     let rouletteStore: StoreOf<Roulette>
     let settingStore: StoreOf<Setting>
 
+    
     public init(
         rouletteStore: StoreOf<Roulette>,
         settingStore: StoreOf<Setting>

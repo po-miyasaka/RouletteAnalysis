@@ -14,12 +14,14 @@ public struct FeedbackRequester {
     var send: (FeedbackData) async -> Result<Void, String>
 }
 
+
 extension DependencyValues {
     public var feedbackRequester: FeedbackRequester {
         get { self[FeedbackRequester.self] }
         set { self[FeedbackRequester.self] = newValue }
     }
 }
+
 
 extension FeedbackRequester: DependencyKey {
     public static var liveValue: FeedbackRequester = {

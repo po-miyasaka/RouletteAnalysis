@@ -15,8 +15,6 @@ import SettingView
 import RouletteView
 @_exported import FirebaseCore // Main側でFirebaseをimportせずに使えるようにするためにこちら側からexport
 
-
-
 public struct AppView: View {
     let store: StoreOf<AppFeature>
     @ObservedObject var viewStore: ViewStore<AppFeature.State, AppFeature.Action>

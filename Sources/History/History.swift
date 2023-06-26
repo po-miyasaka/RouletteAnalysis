@@ -15,6 +15,8 @@ public struct History: ReducerProtocol {
     @Dependency(\.uuid) var uuid
     public init() {}
 
+    
+    
     public struct State: Equatable, Codable {
         public var items: [HistoryItem] = []
         public var displayLimit: Double = 16
