@@ -29,7 +29,9 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         if let googleAppID {
             FirebaseApp.configure()
 #if canImport(Ad)
+            
             GADMobileAds.sharedInstance().start(completionHandler: nil)
+            
 #endif
         }
         return true
