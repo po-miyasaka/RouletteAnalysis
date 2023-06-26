@@ -16,6 +16,7 @@ import Setting
 import Ad
 #endif
 
+
 public struct SettingView: View {
     // 汎用的なSettingにViewのロジックが含まれないようにするために試しに専用のReducerをつくってみた。
     // BindingなどでStateとActionの型がきまっているために、Reducer同士で連携するのは厳しそう。
