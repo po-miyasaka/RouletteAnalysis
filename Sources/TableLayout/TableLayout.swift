@@ -16,12 +16,11 @@ public struct TableLayout: ReducerProtocol {
         public init() {}
     }
 
-    
     public enum Action: Equatable {
         case select(ItemWithWeight)
         case add(ItemWithWeight)
     }
- 
+
     public func reduce(into state: inout State, action: Action) -> ComposableArchitecture.EffectTask<Action> {
         switch action {
         case let .select(item):
