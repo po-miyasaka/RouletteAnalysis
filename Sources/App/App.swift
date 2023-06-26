@@ -24,6 +24,8 @@ public struct AppFeature: ReducerProtocol {
         public var activeAlert: ActiveAlert?
 
     }
+    
+    
 
     public enum Action: Equatable {
         case settings(Setting.Action)

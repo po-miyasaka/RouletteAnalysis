@@ -10,7 +10,7 @@ import SwiftUI
 public struct Item: Identifiable, Equatable, Codable {
     
     public var id: UUID
-    public let number:        Number
+    public let number:         Number
     public let color: Color
 
     public init(number: Number, color: Color, id: UUID = UUID()) {
@@ -18,6 +18,7 @@ public struct Item: Identifiable, Equatable, Codable {
         self.color = color
         self.id = id
     }
+    
 
     public static func make(_ number: Number, rule: Rule = .tripleZero) -> Self {
         let item = rule.wheel.first(where: { $0.number == number })!
