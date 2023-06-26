@@ -17,7 +17,7 @@ import TableLayoutView
 import Ad
 #endif
 
-public struct RouletteView:       View {
+public struct RouletteView: View {
 
     @ObservedObject var rouletteViewStore: ViewStoreOf<Roulette>
     @ObservedObject var settingViewStore: ViewStoreOf<Setting>
