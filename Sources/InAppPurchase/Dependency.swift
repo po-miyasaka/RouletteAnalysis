@@ -19,7 +19,7 @@ extension InAppPurchaseService: DependencyKey {
     public static var liveValue: InAppPurchaseService = {
         .default
     }()
-    
+
     public static var testValue: InAppPurchaseService = {
         var testValue = InAppPurchaseService.default
         testValue.buy = { purchase in .purchased }

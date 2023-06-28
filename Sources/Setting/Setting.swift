@@ -98,9 +98,7 @@ public struct Setting: ReducerProtocol {
             return .fireAndForget {
                 await userDefaults.setScreenLayout(value.rawValue)
             }
-            
 
-            
         case .setup:
             state.rule = userDefaults.rule.flatMap(Rule.init(rawValue:)) ?? .theStar
             state.weightWidthForPrediction = userDefaults.weightWidthForPrediction.flatMap(WeightWidth.init(rawValue:)) ?? .seven
@@ -113,7 +111,7 @@ public struct Setting: ReducerProtocol {
         case let .alert(value):
             state.activeAlert = value
             return .none
-            
+
         case .hideAd:
             state.isHidingAd = true
             return .none
@@ -121,10 +119,10 @@ public struct Setting: ReducerProtocol {
             return .run { send in
                 let result = await inAppPurchase.buy(.adFree)
                 switch result {
-                    
+
                 case .purchased, .restored:
                     await userDefaults.setIsHidingAd(true)
-                    
+
                 case .failed(_):
                     break
                 }
@@ -135,7 +133,7 @@ public struct Setting: ReducerProtocol {
             return .run { send in
                 let result = await inAppPurchase.restore()
                 switch result {
-                    
+
                 case .purchased, .restored:
                     await userDefaults.setIsHidingAd(true)
                 case .failed(_):

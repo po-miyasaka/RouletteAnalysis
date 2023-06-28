@@ -28,7 +28,7 @@ public struct RouletteView: View {
         self.rouletteStore = rouletteStore
         self.settingStore = settingStore
     }
-    
+
     @ViewBuilder
     public var body: some View {
         Group {
@@ -40,7 +40,7 @@ public struct RouletteView: View {
                 WheelView(rouletteStore: rouletteStore, settingStore: settingStore).frame(width: 330)
             }
 #else
-            
+
             if settingViewStore.screenLayout == .tab {
                 TabView {
                     ScrollView(showsIndicators: false) {
@@ -51,11 +51,10 @@ public struct RouletteView: View {
                             Text("Ad").font(.caption).padding(4)
                             AdBannerView(place: .rouletteTab).background(.gray).frame(height: 500)
                         }
-                        
+
                     }
                     WheelView(rouletteStore: rouletteStore, settingStore: settingStore).frame(width: 330)
-                    
-                    
+
                 }.tabViewStyle(PageTabViewStyle(indexDisplayMode: .always)) // this makes it a paging scroll view
                     .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
             } else {
@@ -69,13 +68,13 @@ public struct RouletteView: View {
                             AdBannerView(place: .rouletteTab).frame(width: 320, height: 500).background(.gray)
                         }
                     }
-                    
+
                 }
             }
-            
+
 #endif
         }
-        
+
         .onAppear {
             rouletteViewStore.send(.onAppear)
         }

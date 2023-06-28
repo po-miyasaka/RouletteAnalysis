@@ -1,4 +1,3 @@
-
 import Foundation
 import StoreKit
 
@@ -39,37 +38,35 @@ public class InAppPurchaseService: NSObject {
     private var buyDelegate: Delegate?
     private var restoreDelegate: Delegate?
     private var productsContinuation: CheckedContinuation<[SKProduct], Never>?
-    
+
     private func fetchProducts() async {
         if !products.isEmpty {
             return
         }
-        
+
         self.products = await withCheckedContinuation({ [weak self] continuation in
             self?.productsContinuation = continuation
             request.cancel()
             request.delegate = self
             request.start()
         })
-        
-        
+
     }
-    
-    
+
     public lazy var buy: (Purchase) async -> InAppPurchaseService.Result = {[weak self] purchase in
         await self?.fetchProducts()
         guard let product = self?.products.first(where: { $0.productIdentifier == purchase.id }) else {
             return .failed(1)
         }
-        
+
         return await withCheckedContinuation({ [weak self] continuation in
-            
+
             guard let self else {
                 continuation.resume(returning: Result.failed(2))
                 return
             }
-            
-            if SKPaymentQueue.canMakePayments()  {
+
+            if SKPaymentQueue.canMakePayments() {
                 let delegate = Delegate(continuation: continuation)
                 self.buyDelegate = delegate
                 let payment = SKPayment(product: product)
@@ -84,31 +81,31 @@ public class InAppPurchaseService: NSObject {
 
     public lazy var restore: () async -> InAppPurchaseService.Result = {
         return await withCheckedContinuation({ [weak self] continuation in
-            
+
             guard let self else {
                 continuation.resume(returning: Result.failed(4))
                 return
             }
-            
+
             if SKPaymentQueue.canMakePayments() {
                 let delegate = Delegate(continuation: continuation)
                 self.restoreDelegate = delegate
                 SKPaymentQueue.default().add(delegate)
                 SKPaymentQueue.default().restoreCompletedTransactions()
-                
+
             } else {
                 continuation.resume(returning: InAppPurchaseService.Result.failed(5) )
             }
         })
     }
-    
+
     class Delegate: NSObject, SKPaymentTransactionObserver {
         private var continuation: CheckedContinuation<InAppPurchaseService.Result, Never>?
         convenience init(continuation: CheckedContinuation<InAppPurchaseService.Result, Never>) {
             self.init()
             self.continuation = continuation
         }
-        
+
         public func paymentQueue(_: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
             for transaction in transactions {
                 switch transaction.transactionState {
@@ -127,8 +124,7 @@ public class InAppPurchaseService: NSObject {
                 default:
                     break
                 }
-                
-                
+
             }
         }
     }

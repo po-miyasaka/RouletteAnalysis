@@ -277,7 +277,7 @@ let package = Package(
                 .other(composableArchitecture)
             ]
         ),
-        
+
         target(
             name: .InAppPurchase,
             dependencies: [
