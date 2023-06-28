@@ -5,15 +5,15 @@
 //  Created by po_miyasaka on 2023/06/12.
 //
 
+import App
 import ComposableArchitecture
+@_exported import FirebaseCore // Main側でFirebaseをimportせずに使えるようにするためにこちら側からexport
+import RouletteView
+import Setting
+import SettingView
 import SwiftUI
 import Tutorial
 import Utility
-import App
-import Setting
-import SettingView
-import RouletteView
-@_exported import FirebaseCore // Main側でFirebaseをimportせずに使えるようにするためにこちら側からexport
 
 public struct AppView: View {
     let store: StoreOf<AppFeature>
@@ -32,44 +32,44 @@ public struct AppView: View {
                 then: { rouletteStore in
                     RouletteView(rouletteStore: rouletteStore, settingStore: store.settingStore)
                 }
-            )// stateが無いときは何も返さないしonAppearも呼ばれないのでEmptyView
+            ) // stateが無いときは何も返さないしonAppearも呼ばれないのでEmptyView
             EmptyView()
         }
         .onAppear {
             viewStore.send(.onAppear)
         }
         .extend {
-#if os(macOS)
+            #if os(macOS)
 
-            $0
-#else
-            $0.onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
-                // TODO: Dependency利用 (しなくてもいいかも)
-                viewStore.send(.save)
-            }
-#endif
+                $0
+            #else
+                $0.onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
+                    // TODO: Dependency利用 (しなくてもいいかも)
+                    viewStore.send(.save)
+                }
+            #endif
         }
 
         .extend {
-#if os(macOS)
-            $0.alert(item: viewStore.binding(get: \.activeAlert, send: { value in AppFeature.Action.alert(value) }), content: { item in
+            #if os(macOS)
+                $0.alert(item: viewStore.binding(get: \.activeAlert, send: { value in AppFeature.Action.alert(value) }), content: { item in
 
-                Alert(title: Text(item.rawValue), primaryButton: .destructive(Text("Close this roulette")) {
-                    viewStore.send(.closeRoulette)
+                    Alert(title: Text(item.rawValue), primaryButton: .destructive(Text("Close this roulette")) {
+                        viewStore.send(.closeRoulette)
                 }, secondaryButton: .cancel(Text("Cancel")))
 
             })
-#else
-            $0.actionSheet(item: viewStore.binding(get: \.activeAlert, send: { value in AppFeature.Action.alert(value) }), content: { item in
+            #else
+                $0.actionSheet(item: viewStore.binding(get: \.activeAlert, send: { value in AppFeature.Action.alert(value) }), content: { item in
 
-                ActionSheet(title: Text(item.rawValue), buttons: [
-                    .destructive(Text("Close this roulette")) {
-                        viewStore.send(.closeRoulette)
-                    },
-                    .cancel()
-                ])
+                    ActionSheet(title: Text(item.rawValue), buttons: [
+                        .destructive(Text("Close this roulette")) {
+                            viewStore.send(.closeRoulette)
+                        },
+                        .cancel(),
+                    ])
             })
-#endif
+            #endif
         }
 
         .sheet(
@@ -83,11 +83,11 @@ public struct AppView: View {
                 let settingsStore = store.scope(state: { $0.settings }, action: { AppFeature.Action.settings($0) })
 
                 SettingView(store: settingsStore).extend {
-#if os(macOS)
-                    $0.padding()
-#else
-                    $0
-#endif
+                    #if os(macOS)
+                        $0.padding()
+                    #else
+                        $0
+                    #endif
                 }
             case .tutorial:
                 TutorialView()
@@ -95,12 +95,12 @@ public struct AppView: View {
         }
 
         .toolbar {
-#if os(macOS)
-            let placement: ToolbarItemPlacement = .navigation
+            #if os(macOS)
+                let placement: ToolbarItemPlacement = .navigation
 
-#elseif os(iOS)
-            let placement: ToolbarItemPlacement = .navigationBarTrailing
-#endif
+            #elseif os(iOS)
+                let placement: ToolbarItemPlacement = .navigationBarTrailing
+            #endif
 
             ToolbarItem(placement: .navigation, content: {
                 Button {

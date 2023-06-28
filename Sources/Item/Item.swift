@@ -8,7 +8,6 @@
 import SwiftUI
 
 public struct Item: Identifiable, Equatable, Codable {
-
     public var id: UUID
     public let number: Number
     public let color: Color
@@ -19,7 +18,7 @@ public struct Item: Identifiable, Equatable, Codable {
         self.id = id
     }
 
-    public static func  make(_ number: Number, rule: Rule = .tripleZero) -> Self {
+    public static func make(_ number: Number, rule: Rule = .tripleZero) -> Self {
         let item = rule.wheel.first(where: { $0.number == number })!
         return item
     }
@@ -256,7 +255,7 @@ public enum Rule: String, CaseIterable {
         .init(number: .n23, color: .red),
         .init(number: .n35, color: .black),
         .init(number: .n14, color: .red),
-        .init(number: .n2, color: .black)
+        .init(number: .n2, color: .black),
     ]
 
     static var americanLayout: [Item] {
@@ -311,7 +310,7 @@ public enum Rule: String, CaseIterable {
         .init(number: .n12, color: .red),
         .init(number: .n35, color: .black),
         .init(number: .n3, color: .red),
-        .init(number: .n26, color: .black)
+        .init(number: .n26, color: .black),
     ]
 
     static var europeanLayout: [Item] {

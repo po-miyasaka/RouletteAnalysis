@@ -6,10 +6,10 @@
 //
 
 import ComposableArchitecture
+import Roulette
+import Setting
 import SwiftUI
 import UserDefaultsClient
-import Setting
-import Roulette
 
 public struct AppFeature: ReducerProtocol {
     public init() {}
@@ -22,7 +22,6 @@ public struct AppFeature: ReducerProtocol {
         public var activeSheet: ActiveSheet?
         public var roulettes: [Roulette.State] = []
         public var activeAlert: ActiveAlert?
-
     }
 
     public enum Action: Equatable {

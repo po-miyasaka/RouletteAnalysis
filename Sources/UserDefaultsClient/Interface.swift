@@ -41,11 +41,19 @@ public struct UserDefaultsClient {
         let value = integerForKey(defaultDisplayedHistoryLimitKey)
         return value == 0 ? nil : value
     }
-
+    
     public func setDefaultDisplayedHistoryLimit(_ value: Int) async {
         await setInteger(value, defaultDisplayedHistoryLimitKey)
     }
-
+    
+    public var isHidingAd: Bool {
+        boolForKey(isHidingAdKey)
+    }
+    
+    public func setIsHidingAd(_ value: Bool) async {
+        await setBool(value, isHidingAdKey)
+    }
+    
     public var screenLayout: String? {
         let value = stringForKey(screenLayoutKey)
         return value
@@ -87,3 +95,4 @@ let roulettesKey = "roulettesKey"
 let defaultDisplayedHistoryLimitKey = "defaultDisplayedHistoryLimitKey"
 let didFirstLaunchKey = "didFirstLaunchKey"
 let screenLayoutKey = "screenLayoutKey"
+let isHidingAdKey = "isHidingAdKey"

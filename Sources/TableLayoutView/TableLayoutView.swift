@@ -7,14 +7,13 @@
 
 import ComposableArchitecture
 import Item
+import Roulette
+import Setting
 import SwiftUI
 import TableLayout
 import Utility
-import Roulette
-import Setting
 
 public struct TableLayoutView: View {
-
     @ObservedObject var tableLayoutViewStore: ViewStoreOf<TableLayout>
     @ObservedObject var rouletteViewStore: ViewStoreOf<Roulette>
     @ObservedObject var settingViewStore: ViewStoreOf<Setting>
@@ -22,15 +21,14 @@ public struct TableLayoutView: View {
     let settingStore: StoreOf<Setting>
 
     public init(rouletteStore: StoreOf<Roulette>, settingStore: StoreOf<Setting>) {
-        self.rouletteViewStore = ViewStore(rouletteStore)
-        self.settingViewStore = ViewStore(settingStore)
+        rouletteViewStore = ViewStore(rouletteStore)
+        settingViewStore = ViewStore(settingStore)
         self.rouletteStore = rouletteStore
         self.settingStore = settingStore
-        self.tableLayoutViewStore = ViewStore(rouletteStore.tableLayoutStore)
+        tableLayoutViewStore = ViewStore(rouletteStore.tableLayoutStore)
     }
 
     public var body: some View {
-
         let predictedData = layoutData(roulette: rouletteViewStore.state, setting: settingViewStore.state)
         let zeroColumn = Array(repeating: GridItem(.flexible(), spacing: 3), count: settingViewStore.rule.zeroCount)
         let numbersColumn = Array(repeating: GridItem(.flexible(), spacing: 3), count: 3)
@@ -99,11 +97,11 @@ public func layoutData(
     roulette: Roulette.State,
     setting: Setting.State
 ) -> [ItemWithWeight] {
-        makeLayoutData(
-            history: roulette.history.limitedHistory.map(\.item),
-            weightWidthForSelecting: setting.weightWidthForPrediction,
-            weightWidthForHistory: setting.weightWidthForHistory,
-            rule: setting.rule,
-            selectedItem: roulette.selectedForPrediction
-        )
+    makeLayoutData(
+        history: roulette.history.limitedHistory.map(\.item),
+        weightWidthForSelecting: setting.weightWidthForPrediction,
+        weightWidthForHistory: setting.weightWidthForHistory,
+        rule: setting.rule,
+        selectedItem: roulette.selectedForPrediction
+    )
 }

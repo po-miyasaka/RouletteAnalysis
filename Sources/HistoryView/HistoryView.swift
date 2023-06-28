@@ -6,14 +6,14 @@
 //
 
 import ComposableArchitecture
+import History
 import Item
 import SwiftUI
 import UserDefaultsClient
-import History
 
 public struct HistoryView: View {
     public let store: StoreOf<History>
-    public init(store: StoreOf<History>) {self.store = store}
+    public init(store: StoreOf<History>) { self.store = store }
     @ViewBuilder
     public var body: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
@@ -60,7 +60,7 @@ public struct HistoryView: View {
                         value: viewStore.binding(
                             get: { $0.displayLimit },
                             send: { value in
-                                return History.Action.change(value)
+                                History.Action.change(value)
                             }
                         ),
                         in: 0 ... Double(max(viewStore.items.count, 1)),

@@ -7,12 +7,12 @@
 
 import ComposableArchitecture
 import Foundation
+import History
 import Item
 import SwiftUI
-import UserDefaultsClient
-import History
-import Wheel
 import TableLayout
+import UserDefaultsClient
+import Wheel
 
 public struct Roulette: ReducerProtocol {
     public init() {}
@@ -78,7 +78,6 @@ public struct Roulette: ReducerProtocol {
 }
 
 public struct ColorData: Equatable, Codable {
-
     var red: Double = 0
     var blue: Double = 0
     var green: Double = 0
@@ -93,6 +92,7 @@ public struct ColorData: Equatable, Codable {
 //        self.blue = blue
 //        self.green = green
     }
+
     var color: Color {
         print(self)
         return .init(red: red, green: green, blue: blue)
@@ -103,18 +103,21 @@ public extension StoreOf<Roulette> {
     var historyStore: StoreOf<History> {
         scope(
             state: \.history,
-            action: Roulette.Action.history)
+            action: Roulette.Action.history
+        )
     }
+
     var wheelStore: StoreOf<Wheel> {
         scope(
             state: \.wheel,
-            action: Roulette.Action.wheel)
+            action: Roulette.Action.wheel
+        )
     }
 
     var tableLayoutStore: StoreOf<TableLayout> {
         scope(
             state: \.layout,
-            action: Roulette.Action.layout)
+            action: Roulette.Action.layout
+        )
     }
-
 }

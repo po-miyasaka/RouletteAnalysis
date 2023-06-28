@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by po_miyasaka on 2023/06/20.
 //
@@ -22,9 +22,6 @@ public struct Wheel: ReducerProtocol {
         case change(Mode)
     }
 
-    
-    
-    
     public func reduce(into state: inout State, action: Action) -> ComposableArchitecture.EffectTask<Action> {
         switch action {
         case let .change(mode):

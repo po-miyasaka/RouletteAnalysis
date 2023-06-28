@@ -38,6 +38,7 @@ enum TargetName {
     case Utility
     case Wheel
     case WheelView
+    case InAppPurchase
     case RouletteFeatureTests
     case other(Target.Dependency)
 
@@ -82,6 +83,8 @@ enum TargetName {
             return "WheelView"
         case .Ad:
             return "Ad"
+        case .InAppPurchase:
+            return "InAppPurchase"
         case .RouletteFeatureTests:
             return "RouletteFeatureTests"
         case .other:
@@ -166,6 +169,7 @@ let package = Package(
             name: .Setting,
             dependencies: [.UserDefaultsClient,
                            .Item,
+                           .InAppPurchase,
                            .other(composableArchitecture)]
         ),
 
@@ -269,6 +273,13 @@ let package = Package(
         ),
         target(
             name: .UserDefaultsClient,
+            dependencies: [
+                .other(composableArchitecture)
+            ]
+        ),
+        
+        target(
+            name: .InAppPurchase,
             dependencies: [
                 .other(composableArchitecture)
             ]
