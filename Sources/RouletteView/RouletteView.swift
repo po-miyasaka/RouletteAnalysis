@@ -115,7 +115,7 @@ public struct RouletteView: View {
             $0
             #endif
         }
-        
+
     }
 
     func scrollLayout() -> some View {
