@@ -85,7 +85,7 @@ public struct SettingView: View {
                 }
 #endif
             }
-            
+
         }
         .overlay {
             if settingsViewStore.isConnecting {

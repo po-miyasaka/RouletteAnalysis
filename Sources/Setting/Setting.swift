@@ -83,12 +83,12 @@ public struct Setting: ReducerProtocol {
         case let .changeWeightForPrediction(weightForPrediction):
             state.weightWidthForPrediction = weightForPrediction
             return .fireAndForget {
-                await userDefaults.setOmoiWidthForPrediction(weightForPrediction.rawValue)
+                await userDefaults.setWeightWidthForPrediction(weightForPrediction.rawValue)
             }
         case let .changeWeightForHistory(weightForHistory):
             state.weightWidthForHistory = weightForHistory
             return .fireAndForget {
-                await userDefaults.setOmoiWidthForHistory(weightForHistory.rawValue)
+                await userDefaults.setWeightWidthForHistory(weightForHistory.rawValue)
             }
         case let .changeDefaultDisplayedHistoryLimit(value):
             state.defaultDisplayedHistoryLimit = value
@@ -118,7 +118,7 @@ public struct Setting: ReducerProtocol {
             state.isHidingAd = true
             return .none
         case .buyHiddingAd:
-            
+
             return .run { send in
                 await send(.setConnecting(true))
                 let result = await inAppPurchase.buy(.adFree)

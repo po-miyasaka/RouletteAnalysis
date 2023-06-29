@@ -61,9 +61,7 @@ public struct RouletteView: View {
 #endif
         }
     }
-    
-    
-    
+
     @ViewBuilder
     func _bodyForMac() -> some View {
         ScrollView {
@@ -73,7 +71,7 @@ public struct RouletteView: View {
             WheelView(rouletteStore: rouletteStore, settingStore: settingStore).frame(width: 330)
         }
     }
-    
+
     @ViewBuilder
     func _bodyForiOS() -> some View {
         if settingViewStore.screenLayout == .tab {
@@ -82,7 +80,7 @@ public struct RouletteView: View {
             scrollLayout()
         }
     }
-    
+
     @ViewBuilder
     func tabLayout() -> some View {
         TabView {
@@ -96,12 +94,12 @@ public struct RouletteView: View {
                     }
 #endif
                 }
-                
+
             }
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 16) {
                     WheelView(rouletteStore: rouletteStore, settingStore: settingStore).frame(width: 330).padding(.top, 24)
-                    
+
                     #if canImport(Ad)
                     if !settingViewStore.isHidingAd {
                         AdBannerView(place: .wheelTabBottom).background(.gray).frame(height: 400)
@@ -113,7 +111,7 @@ public struct RouletteView: View {
         }.tabViewStyle(PageTabViewStyle(indexDisplayMode: .always)) // this makes it a paging scroll view
             .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
     }
-    
+
     func scrollLayout() -> some View {
         ScrollView {
             VStack(spacing: 16) {
@@ -121,22 +119,18 @@ public struct RouletteView: View {
                     TableLayoutView(rouletteStore: rouletteStore, settingStore: settingStore).padding(.bottom, 44).padding(.horizontal, 8)
                 }
                 WheelView(rouletteStore: rouletteStore, settingStore: settingStore).frame(width: 330)
-                
+
                 #if canImport(Ad)
                 if !settingViewStore.isHidingAd {
                     AdBannerView(place: .rouletteTab).frame(width: 320, height: 500).background(.gray)
                 }
                 #endif
             }
-            
 
         }
     }
-    
+
 }
-
-
-
 
 extension Bool: Identifiable {
     public var id: Bool { self }

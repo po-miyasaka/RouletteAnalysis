@@ -25,7 +25,7 @@ public struct UserDefaultsClient {
         stringForKey(weightWidthForPredictionKey)
     }
 
-    public func setOmoiWidthForPrediction(_ value: String) async {
+    public func setWeightWidthForPrediction(_ value: String) async {
         await setString(value, weightWidthForPredictionKey)
     }
 
@@ -33,7 +33,7 @@ public struct UserDefaultsClient {
         stringForKey(weightWidthForHistoryKey)
     }
 
-    public func setOmoiWidthForHistory(_ value: String) async {
+    public func setWeightWidthForHistory(_ value: String) async {
         await setString(value, weightWidthForHistoryKey)
     }
 
