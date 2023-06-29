@@ -14,7 +14,7 @@ import SwiftUI
 import TableLayoutView
 import WheelView
 #if canImport(Ad)
-import Ad
+    import Ad
 #endif
 
 public struct RouletteView: View {
@@ -32,11 +32,11 @@ public struct RouletteView: View {
     @ViewBuilder
     public var body: some View {
         Group {
-#if os(macOS)
-            _bodyForMac()
-#else
-            _bodyForiOS()
-#endif
+            #if os(macOS)
+                _bodyForMac()
+            #else
+                _bodyForiOS()
+            #endif
         }
 
         .onAppear {
@@ -44,21 +44,21 @@ public struct RouletteView: View {
         }
         .safeAreaInset(edge: .top, alignment: .center, spacing: 0) {
             HistoryView(store: rouletteStore.historyStore).extend {
-#if os(macOS)
-                $0.padding(.horizontal, 8)
-#else
-                $0
-#endif
+                #if os(macOS)
+                    $0.padding(.horizontal, 8)
+                #else
+                    $0
+                #endif
             }
         }
         .extend {
-#if os(iOS)
-            if #available(iOS 16.0, *) {
-                $0.toolbar(.visible, for: ToolbarPlacement.navigationBar)
-            }
-#else
-            $0
-#endif
+            #if os(iOS)
+                if #available(iOS 16.0, *) {
+                    $0.toolbar(.visible, for: ToolbarPlacement.navigationBar)
+                }
+            #else
+                $0
+            #endif
         }
     }
 
@@ -86,24 +86,23 @@ public struct RouletteView: View {
         TabView {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 8) {
-                TableLayoutView(rouletteStore: rouletteStore, settingStore: settingStore).padding(.horizontal, 8)
-#if canImport(Ad)
-                    if !settingViewStore.isHidingAd {
-                        Text("Ad").font(.caption)
-                        AdBannerView(place: .rouletteTab).background(.gray).frame(height: 400)
-                    }
-#endif
+                    TableLayoutView(rouletteStore: rouletteStore, settingStore: settingStore).padding(.horizontal, 8)
+                    #if canImport(Ad)
+                        if !settingViewStore.isHidingAd {
+                            Text("Ad").font(.caption)
+                            AdBannerView(place: .rouletteTab).background(.gray).frame(height: 400)
+                        }
+                    #endif
                 }
-
             }
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 16) {
                     WheelView(rouletteStore: rouletteStore, settingStore: settingStore).frame(width: 330).padding(.top, 24)
 
                     #if canImport(Ad)
-                    if !settingViewStore.isHidingAd {
-                        AdBannerView(place: .wheelTabBottom).background(.gray).frame(height: 400)
-                    }
+                        if !settingViewStore.isHidingAd {
+                            AdBannerView(place: .wheelTabBottom).background(.gray).frame(height: 400)
+                        }
                     #endif
                 }
             }
@@ -121,15 +120,13 @@ public struct RouletteView: View {
                 WheelView(rouletteStore: rouletteStore, settingStore: settingStore).frame(width: 330)
 
                 #if canImport(Ad)
-                if !settingViewStore.isHidingAd {
-                    AdBannerView(place: .rouletteTab).frame(width: 320, height: 500).background(.gray)
-                }
+                    if !settingViewStore.isHidingAd {
+                        AdBannerView(place: .rouletteTab).frame(width: 320, height: 500).background(.gray)
+                    }
                 #endif
             }
-
         }
     }
-
 }
 
 extension Bool: Identifiable {

@@ -14,7 +14,7 @@ import Tutorial
 import Utility
 
 #if canImport(Ad)
-import Ad
+    import Ad
 #endif
 
 public struct SettingView: View {
@@ -55,44 +55,43 @@ public struct SettingView: View {
     @Environment(\.dismiss) var dismiss
 
     public var body: some View {
-#if os(macOS)
-        WithCloseButton(dismissAction: { dismiss() }) {
-            form()
-                .sheet(
-                    item: viewStore.binding(
-                        get: { state in
-                            state.activeSheet
-                        },
-                        send: { ViewReducer.Action.setActiveSheet($0) }
-                    )
-                ) {
-                    switch $0 {
-                    case .tutorial:
-                        TutorialView().padding()
-                    case .feedback:
-                        FeedbackView(store: .init(initialState: .init(), reducer: FeedbackFeature())).padding()
+        #if os(macOS)
+            WithCloseButton(dismissAction: { dismiss() }) {
+                form()
+                    .sheet(
+                        item: viewStore.binding(
+                            get: { state in
+                                state.activeSheet
+                            },
+                            send: { ViewReducer.Action.setActiveSheet($0) }
+                        )
+                    ) {
+                        switch $0 {
+                        case .tutorial:
+                            TutorialView().padding()
+                        case .feedback:
+                            FeedbackView(store: .init(initialState: .init(), reducer: FeedbackFeature())).padding()
+                        }
                     }
-                }
-        }
-
-#else
-        NavigationView {
-            VStack {
-                form().formStyle(GroupedFormStyle())
-#if canImport(Ad)
-                if !settingsViewStore.isHidingAd {
-                    AdBannerView(place: .settingBottom).background(.gray).frame(height: 300)
-                }
-#endif
             }
 
-        }
-        .overlay {
-            if settingsViewStore.isConnecting {
-                ProgressView().progressViewStyle(CircularProgressViewStyle())
+        #else
+            NavigationView {
+                VStack {
+                    form().formStyle(GroupedFormStyle())
+                    #if canImport(Ad)
+                        if !settingsViewStore.isHidingAd {
+                            AdBannerView(place: .settingBottom).background(.gray).frame(height: 300)
+                        }
+                    #endif
+                }
             }
-        }
-#endif
+            .overlay {
+                if settingsViewStore.isConnecting {
+                    ProgressView().progressViewStyle(CircularProgressViewStyle())
+                }
+            }
+        #endif
     }
 
     @ViewBuilder
@@ -122,82 +121,80 @@ public struct SettingView: View {
                         Text("\(displayedLimit)")
                     }
                 }
-#if os(macOS)
-#else
-                Picker("Screen Layout", selection: settingsViewStore.binding(get: \.screenLayout, send: Setting.Action.changeScreenLayout)) {
-                    ForEach(Setting.ScreenLayout.allCases, id: \.self) { screenLayout in
-                        Text("\(screenLayout.rawValue)")
+                #if os(macOS)
+                #else
+                    Picker("Screen Layout", selection: settingsViewStore.binding(get: \.screenLayout, send: Setting.Action.changeScreenLayout)) {
+                        ForEach(Setting.ScreenLayout.allCases, id: \.self) { screenLayout in
+                            Text("\(screenLayout.rawValue)")
+                        }
                     }
-                }
-#endif
+                #endif
             }
 
-#if !os(macOS)
-            hideAdSection()
-#endif
+            #if !os(macOS)
+                hideAdSection()
+            #endif
 
             feedbackSection()
             tutorialSection()
         }
         .extend {
-#if os(macOS)
+            #if os(macOS)
 
-            $0.alert(item: settingsViewStore.binding(get: { $0.activeAlert }, send: { v in Setting.Action.alert(v) }), content: { alert in
-                Alert(title: Text(alert.displayText), primaryButton:
+                $0.alert(item: settingsViewStore.binding(get: { $0.activeAlert }, send: { v in Setting.Action.alert(v) }), content: { alert in
+                    Alert(title: Text(alert.displayText), primaryButton:
                         .destructive(Text("Change")) {
                             if let rule = alert.rule { settingsViewStore.send(.changeRule(rule)) }
                         },
-                      secondaryButton: .cancel())
+                          secondaryButton: .cancel())
             })
-#else
-            $0.actionSheet(item: settingsViewStore.binding(get: { $0.activeAlert }, send: { v in Setting.Action.alert(v) }), content: { alert in
+            #else
+                $0.actionSheet(item: settingsViewStore.binding(get: { $0.activeAlert }, send: { v in Setting.Action.alert(v) }), content: { alert in
 
-                ActionSheet(title: Text(alert.displayText), buttons: [
-                    .destructive(Text("Change")) {
-                        if let rule = alert.rule { settingsViewStore.send(.changeRule(rule)) }
-                    },
-                    .cancel()
-                ])
+                    ActionSheet(title: Text(alert.displayText), buttons: [
+                        .destructive(Text("Change")) {
+                            if let rule = alert.rule { settingsViewStore.send(.changeRule(rule)) }
+                        },
+                        .cancel(),
+                    ])
             })
-            .alert(item: settingsViewStore.binding(get: { $0.activeAlert }, send: { v in Setting.Action.alert(v) }), content: { alert in
-                Alert(title: Text(alert.displayText))
+                    .alert(item: settingsViewStore.binding(get: { $0.activeAlert }, send: { v in Setting.Action.alert(v) }), content: { alert in
+                        Alert(title: Text(alert.displayText))
             })
-#endif
+            #endif
         }
     }
 
     @ViewBuilder
     func hideAdSection() -> some View {
-#if os(macOS)
-        EmptyView()
-#else
-        Section {
-            Button("Hide Advertisement", action: {
-                settingsViewStore.send(.buyHiddingAd)
+        #if os(macOS)
+            EmptyView()
+        #else
+            Section {
+                Button("Hide Advertisement", action: {
+                    settingsViewStore.send(.buyHiddingAd)
             })
 
-            Button("Restore purchase", action: {
-                settingsViewStore.send(.restore)
+                Button("Restore purchase", action: {
+                    settingsViewStore.send(.restore)
             })
-
-        }
-#endif
-
+            }
+        #endif
     }
 
     @ViewBuilder
     func feedbackSection() -> some View {
         Section {
-#if os(macOS)
-            Button("Request / Feedback", action: {
-                viewStore.send(.setActiveSheet(.feedback))
+            #if os(macOS)
+                Button("Request / Feedback", action: {
+                    viewStore.send(.setActiveSheet(.feedback))
             })
 
-#else
-            NavigationLink<Text, FeedbackView>("Request / Feedback", destination: {
-                FeedbackView(store: .init(initialState: .init(), reducer: FeedbackFeature()))
+            #else
+                NavigationLink<Text, FeedbackView>("Request / Feedback", destination: {
+                    FeedbackView(store: .init(initialState: .init(), reducer: FeedbackFeature()))
             })
-#endif
+            #endif
         }
     }
 
@@ -205,16 +202,16 @@ public struct SettingView: View {
     func tutorialSection() -> some View {
         Section(
             content: {
-#if os(macOS)
-                Button("Tutorial", action: {
-                    viewStore.send(.setActiveSheet(.tutorial))
+                #if os(macOS)
+                    Button("Tutorial", action: {
+                        viewStore.send(.setActiveSheet(.tutorial))
                 })
 
-#else
-                NavigationLink("Tutorial", destination: {
-                    TutorialView()
+                #else
+                    NavigationLink("Tutorial", destination: {
+                        TutorialView()
                 })
-#endif
+                #endif
             },
             footer: {
                 HStack {

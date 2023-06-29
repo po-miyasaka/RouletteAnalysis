@@ -6,11 +6,11 @@
 //
 
 import ComposableArchitecture
+import InAppPurchase
 import Item
 import SwiftUI
 import UserDefaultsClient
 import Utility
-import InAppPurchase
 
 // TODO: SettingとしてRouletteの情報を外に出していることでアプリ全体では扱いにくくなってる感ある。基本は各Reducerにインジェクトしたい情報はdependenciesを使うのが意味的にも良いかもしれない。それ以外の設定をこのSettingに任せるとかがいいかも
 public struct Setting: ReducerProtocol {
@@ -53,7 +53,7 @@ public struct Setting: ReducerProtocol {
             switch self {
             case .change:
                 return "Changing a rule deletes past data. \n Would you like to change the rule ?"
-            case .purchase(let text):
+            case let .purchase(text):
                 return text
             }
         }
@@ -123,11 +123,10 @@ public struct Setting: ReducerProtocol {
                 await send(.setConnecting(true))
                 let result = await inAppPurchase.buy(.adFree)
                 switch result {
-
                 case .purchased, .restored:
                     await userDefaults.setIsHidingAd(true)
                     await send(.hideAd)
-                case .failed(_):
+                case .failed:
                     break
                 }
                 await send(.setConnecting(false))
@@ -138,17 +137,16 @@ public struct Setting: ReducerProtocol {
                 await send(.setConnecting(true))
                 let result = await inAppPurchase.restore()
                 switch result {
-
                 case .purchased, .restored:
                     await userDefaults.setIsHidingAd(true)
                     await send(.hideAd)
-                case .failed(_):
+                case .failed:
                     break
                 }
                 await send(.setConnecting(false))
                 await send(.alert(.purchase(result.userMessage)))
             }
-        case .setConnecting(let value):
+        case let .setConnecting(value):
             state.isConnecting = value
             return .none
         }

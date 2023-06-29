@@ -13,7 +13,7 @@ public class InAppPurchaseService: NSObject {
                 return "Thank you!"
             case .restored:
                 return "Thank you! Restoring succeeded!"
-            case .failed(let id):
+            case let .failed(id):
                 return """
                 An error occured.
                 Please try again later.
@@ -44,22 +44,21 @@ public class InAppPurchaseService: NSObject {
             return
         }
 
-        self.products = await withCheckedContinuation({ [weak self] continuation in
+        products = await withCheckedContinuation { [weak self] continuation in
             self?.productsContinuation = continuation
             request.cancel()
             request.delegate = self
             request.start()
-        })
-
+        }
     }
 
-    public lazy var buy: (Purchase) async -> InAppPurchaseService.Result = {[weak self] purchase in
+    public lazy var buy: (Purchase) async -> InAppPurchaseService.Result = { [weak self] purchase in
         await self?.fetchProducts()
         guard let product = self?.products.first(where: { $0.productIdentifier == purchase.id }) else {
             return .failed(1)
         }
 
-        return await withCheckedContinuation({ [weak self] continuation in
+        return await withCheckedContinuation { [weak self] continuation in
 
             guard let self else {
                 continuation.resume(returning: Result.failed(2))
@@ -73,14 +72,13 @@ public class InAppPurchaseService: NSObject {
                 SKPaymentQueue.default().add(delegate)
                 SKPaymentQueue.default().add(payment)
             } else {
-                continuation.resume(returning: InAppPurchaseService.Result.failed(3) )
+                continuation.resume(returning: InAppPurchaseService.Result.failed(3))
             }
-        })
-
+        }
     }
 
     public lazy var restore: () async -> InAppPurchaseService.Result = {
-        return await withCheckedContinuation({ [weak self] continuation in
+        await withCheckedContinuation { [weak self] continuation in
 
             guard let self else {
                 continuation.resume(returning: Result.failed(4))
@@ -94,9 +92,9 @@ public class InAppPurchaseService: NSObject {
                 SKPaymentQueue.default().restoreCompletedTransactions()
 
             } else {
-                continuation.resume(returning: InAppPurchaseService.Result.failed(5) )
+                continuation.resume(returning: InAppPurchaseService.Result.failed(5))
             }
-        })
+        }
     }
 
     class Delegate: NSObject, SKPaymentTransactionObserver {
@@ -111,7 +109,7 @@ public class InAppPurchaseService: NSObject {
                 switch transaction.transactionState {
                 case .failed:
                     SKPaymentQueue.default().finishTransaction(transaction)
-                    continuation?.resume(returning: .failed(6) )
+                    continuation?.resume(returning: .failed(6))
                     continuation = nil
                 case .purchased:
                     SKPaymentQueue.default().finishTransaction(transaction)
@@ -124,7 +122,6 @@ public class InAppPurchaseService: NSObject {
                 default:
                     break
                 }
-
             }
         }
     }
