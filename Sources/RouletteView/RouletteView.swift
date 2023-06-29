@@ -107,8 +107,15 @@ public struct RouletteView: View {
                 }
             }
 
-        }.tabViewStyle(PageTabViewStyle(indexDisplayMode: .always)) // this makes it a paging scroll view
-            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+        }.extend {
+            #if !os(macOS)
+            $0.tabViewStyle(PageTabViewStyle(indexDisplayMode: .always)) // this makes it a paging scroll view
+                .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+            #else
+            $0
+            #endif
+        }
+        
     }
 
     func scrollLayout() -> some View {
