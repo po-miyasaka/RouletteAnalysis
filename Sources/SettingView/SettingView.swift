@@ -85,6 +85,12 @@ public struct SettingView: View {
                 }
 #endif
             }
+            
+        }
+        .overlay {
+            if settingsViewStore.isConnecting {
+                ProgressView().progressViewStyle(CircularProgressViewStyle())
+            }
         }
 #endif
     }

@@ -10,6 +10,7 @@ import SwiftUI
 public enum Place: String {
     case settingBottom = "setting_bottom"
     case rouletteTab = "roulette_tab"
+    case wheelTabBottom = "wheel_tab_bottom"
 
     var adUnitID: String? {
         guard let dictionary = Bundle.main.infoDictionary,

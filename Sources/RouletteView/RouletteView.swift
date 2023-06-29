@@ -33,45 +33,9 @@ public struct RouletteView: View {
     public var body: some View {
         Group {
 #if os(macOS)
-            ScrollView {
-                ScrollView(showsIndicators: false) {
-                    TableLayoutView(rouletteStore: rouletteStore, settingStore: settingStore).padding(.bottom, 44).padding(8)
-                }
-                WheelView(rouletteStore: rouletteStore, settingStore: settingStore).frame(width: 330)
-            }
+            _bodyForMac()
 #else
-
-            if settingViewStore.screenLayout == .tab {
-                TabView {
-                    ScrollView(showsIndicators: false) {
-                        TableLayoutView(rouletteStore: rouletteStore, settingStore: settingStore).padding(.bottom, 44).padding(8)
-                    }
-                    if !settingViewStore.isHidingAd {
-                        VStack {
-                            Text("Ad").font(.caption).padding(4)
-                            AdBannerView(place: .rouletteTab).background(.gray).frame(height: 500)
-                        }
-
-                    }
-                    WheelView(rouletteStore: rouletteStore, settingStore: settingStore).frame(width: 330)
-
-                }.tabViewStyle(PageTabViewStyle(indexDisplayMode: .always)) // this makes it a paging scroll view
-                    .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
-            } else {
-                ScrollView {
-                    VStack(spacing: 16) {
-                        ScrollView(showsIndicators: false) {
-                            TableLayoutView(rouletteStore: rouletteStore, settingStore: settingStore).padding(.bottom, 44).padding(.horizontal, 8)
-                        }
-                        WheelView(rouletteStore: rouletteStore, settingStore: settingStore).frame(width: 330)
-                        if !settingViewStore.isHidingAd {
-                            AdBannerView(place: .rouletteTab).frame(width: 320, height: 500).background(.gray)
-                        }
-                    }
-
-                }
-            }
-
+            _bodyForiOS()
 #endif
         }
 
@@ -97,7 +61,82 @@ public struct RouletteView: View {
 #endif
         }
     }
+    
+    
+    
+    @ViewBuilder
+    func _bodyForMac() -> some View {
+        ScrollView {
+            ScrollView(showsIndicators: false) {
+                TableLayoutView(rouletteStore: rouletteStore, settingStore: settingStore).padding(.bottom, 44).padding(8)
+            }
+            WheelView(rouletteStore: rouletteStore, settingStore: settingStore).frame(width: 330)
+        }
+    }
+    
+    @ViewBuilder
+    func _bodyForiOS() -> some View {
+        if settingViewStore.screenLayout == .tab {
+            tabLayout()
+        } else {
+            scrollLayout()
+        }
+    }
+    
+    @ViewBuilder
+    func tabLayout() -> some View {
+        TabView {
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 8) {
+                TableLayoutView(rouletteStore: rouletteStore, settingStore: settingStore).padding(.horizontal, 8)
+#if canImport(Ad)
+                    if !settingViewStore.isHidingAd {
+                        Text("Ad").font(.caption)
+                        AdBannerView(place: .rouletteTab).background(.gray).frame(height: 400)
+                    }
+#endif
+                }
+                
+            }
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 16) {
+                    WheelView(rouletteStore: rouletteStore, settingStore: settingStore).frame(width: 330).padding(.top, 24)
+                    
+                    #if canImport(Ad)
+                    if !settingViewStore.isHidingAd {
+                        AdBannerView(place: .wheelTabBottom).background(.gray).frame(height: 400)
+                    }
+                    #endif
+                }
+            }
+
+        }.tabViewStyle(PageTabViewStyle(indexDisplayMode: .always)) // this makes it a paging scroll view
+            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+    }
+    
+    func scrollLayout() -> some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                ScrollView(showsIndicators: false) {
+                    TableLayoutView(rouletteStore: rouletteStore, settingStore: settingStore).padding(.bottom, 44).padding(.horizontal, 8)
+                }
+                WheelView(rouletteStore: rouletteStore, settingStore: settingStore).frame(width: 330)
+                
+                #if canImport(Ad)
+                if !settingViewStore.isHidingAd {
+                    AdBannerView(place: .rouletteTab).frame(width: 320, height: 500).background(.gray)
+                }
+                #endif
+            }
+            
+
+        }
+    }
+    
 }
+
+
+
 
 extension Bool: Identifiable {
     public var id: Bool { self }

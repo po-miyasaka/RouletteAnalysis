@@ -25,6 +25,7 @@ public struct Setting: ReducerProtocol {
         public var screenLayout: ScreenLayout = .tab
         public var activeAlert: ActiveAlert?
         public var isHidingAd: Bool = false
+        public var isConnecting: Bool = false
         public init() {}
     }
 
@@ -40,6 +41,7 @@ public struct Setting: ReducerProtocol {
         case buyHiddingAd
         case restore
         case hideAd
+        case setConnecting(Bool)
     }
 
     public enum ActiveAlert: Equatable, Identifiable {
@@ -116,32 +118,39 @@ public struct Setting: ReducerProtocol {
             state.isHidingAd = true
             return .none
         case .buyHiddingAd:
+            
             return .run { send in
+                await send(.setConnecting(true))
                 let result = await inAppPurchase.buy(.adFree)
                 switch result {
 
                 case .purchased, .restored:
                     await userDefaults.setIsHidingAd(true)
-
+                    await send(.hideAd)
                 case .failed(_):
                     break
                 }
-                await send(.hideAd)
+                await send(.setConnecting(false))
                 await send(.alert(.purchase(result.userMessage)))
             }
         case .restore:
             return .run { send in
+                await send(.setConnecting(true))
                 let result = await inAppPurchase.restore()
                 switch result {
 
                 case .purchased, .restored:
                     await userDefaults.setIsHidingAd(true)
+                    await send(.hideAd)
                 case .failed(_):
                     break
                 }
-                await send(.hideAd)
+                await send(.setConnecting(false))
                 await send(.alert(.purchase(result.userMessage)))
             }
+        case .setConnecting(let value):
+            state.isConnecting = value
+            return .none
         }
     }
 
