@@ -66,7 +66,7 @@ public struct AppView: View {
                         .destructive(Text("Close this roulette")) {
                             viewStore.send(.closeRoulette)
                         },
-                        .cancel(),
+                        .cancel()
                     ])
             })
             #endif

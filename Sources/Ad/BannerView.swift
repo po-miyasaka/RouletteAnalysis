@@ -44,7 +44,7 @@ public enum Place: String {
             view.adUnitID = place.adUnitID
             //        "ca-app-pub-6326437184905669/6995299249"
             view.load(GADRequest())
-            
+
             if let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
                 let keyWindow = windowScene.windows.first { $0.isKeyWindow }
                 view.rootViewController = keyWindow?.rootViewController

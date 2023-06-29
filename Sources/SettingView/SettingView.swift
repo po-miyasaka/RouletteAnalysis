@@ -155,7 +155,7 @@ public struct SettingView: View {
                         .destructive(Text("Change")) {
                             if let rule = alert.rule { settingsViewStore.send(.changeRule(rule)) }
                         },
-                        .cancel(),
+                        .cancel()
                     ])
             })
                     .alert(item: settingsViewStore.binding(get: { $0.activeAlert }, send: { v in Setting.Action.alert(v) }), content: { alert in
