@@ -317,8 +317,6 @@ public enum Rule: String, CaseIterable {
         let sortedByNum = Rule.europeanWheel.sorted(by: {
             $0.number.rawValue < $1.number.rawValue
         })
-
-//        sortedByNum.move(fromOffsets: [sortedByNum.endIndex - 1], toOffset: 1)
         return sortedByNum
     }
 

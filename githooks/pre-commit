@@ -16,14 +16,22 @@ if [ -z "$staged_files" ]; then
     exit 0
 fi
 
-
+echo "////////////////////"
+echo "Swiftformat start"
+echo "////////////////////"
 for file in $staged_files; do
     swiftformat_result=$(swiftformat --lint "$file")
     if [ -n "$swiftformat_result" ]; then
         echo "SwiftFormat found style violations in $file:"
         echo "$swiftformat_result"
     fi
-    
+done
+
+
+echo "////////////////////"
+echo "Swiftlint start"
+echo "////////////////////"
+for file in $staged_files; do
     swiftlint_result=$(swiftlint autocorrect "$file")
     if [ -n "$swiftlint_result" ]; then
         echo "Swiftlint found style violations in $file:"
@@ -31,7 +39,10 @@ for file in $staged_files; do
     fi
 done
 
+
+echo "////////////////////"
 echo "Spelling check start"
+echo "////////////////////"
 for file in $staged_files; do
     cspell_result=$(cspell lint -c cspell.json --words-only --no-progress "$file")
     if [ -n "$cspell_result" ]; then

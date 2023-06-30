@@ -10,7 +10,7 @@ import ComposableArchitecture
 import Foundation
 
 extension String: Error {}
-public struct FedbckRequester {
+public struct FeedbackRequester {
     var send: (FeedbackData) async -> Result<Void, String>
 }
 
