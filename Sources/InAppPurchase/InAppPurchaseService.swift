@@ -15,7 +15,7 @@ public class InAppPurchaseService: NSObject {
                 return "Thank you! Restoring succeeded!"
             case let .failed(id):
                 return """
-                An error occured.
+                An error occurred.
                 Please try again later.
                 (Error ID: \(id))
                 """

@@ -38,7 +38,7 @@ public struct Setting: ReducerProtocol {
         case changeScreenLayout(ScreenLayout)
         case setup
         case alert(ActiveAlert?)
-        case buyHiddingAd
+        case buyHidingAd
         case restore
         case hideAd
         case setConnecting(Bool)
@@ -117,7 +117,7 @@ public struct Setting: ReducerProtocol {
         case .hideAd:
             state.isHidingAd = true
             return .none
-        case .buyHiddingAd:
+        case .buyHidingAd:
 
             return .run { send in
                 await send(.setConnecting(true))

@@ -79,9 +79,9 @@ public struct FeedbackFeature: ReducerProtocol {
     }
 
     func machineInfo() -> String {
-        var systeminfo = utsname()
-        uname(&systeminfo)
-        let machine = withUnsafeBytes(of: &systeminfo.machine) { bufPtr -> String in
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machine = withUnsafeBytes(of: &systemInfo.machine) { bufPtr -> String in
             let data = Data(bufPtr)
             if let lastIndex = data.lastIndex(where: { $0 != 0 }) {
                 return String(data: data[0 ... lastIndex], encoding: .isoLatin1)!
@@ -129,7 +129,7 @@ public struct FeedbackView: View {
                 })
 
                 Section(
-                    header: Text("Request / Bug report / Inquery").font(.caption).foregroundColor(Color.gray),
+                    header: Text("Request / Bug report / Inquiry").font(.caption).foregroundColor(Color.gray),
                     footer:
                     Button(action: {
                         viewStore.send(.submit)

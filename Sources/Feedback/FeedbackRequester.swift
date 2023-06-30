@@ -31,15 +31,15 @@ extension FeedbackRequester: DependencyKey {
             } catch let e as APIClient.E {
                 switch e {
                 case .response:
-                    return .failure("Sorry. An error occured. Please try again later. (500)")
+                    return .failure("Sorry. An error occurred. Please try again later. (500)")
                 case .decode:
-                    return .failure("Sorry. An error occured.(403.1)")
+                    return .failure("Sorry. An error occurred.(403.1)")
                 case .request:
-                    return .failure("Sorry. An error occured. (403.2)")
+                    return .failure("Sorry. An error occurred. (403.2)")
                 case .invalidURL:
-                    return .failure("Sorry. An error occured.  (404)")
+                    return .failure("Sorry. An error occurred.  (404)")
                 case .makeURLRequest:
-                    return .failure("Sorry. An error occured.(403.3)")
+                    return .failure("Sorry. An error occurred.(403.3)")
                 }
             } catch {
                 return .failure("unexpected error")

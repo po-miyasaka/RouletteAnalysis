@@ -172,7 +172,7 @@ public struct SettingView: View {
         #else
             Section {
                 Button("Hide Advertisement", action: {
-                    settingsViewStore.send(.buyHiddingAd)
+                    settingsViewStore.send(.buyHidingAd)
             })
 
                 Button("Restore purchase", action: {

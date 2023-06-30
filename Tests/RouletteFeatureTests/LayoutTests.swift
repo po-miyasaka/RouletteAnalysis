@@ -59,8 +59,8 @@ final class LayoutTests: XCTestCase {
         await rouletteStore.send(.layout(.select(.init(item: item2.item, weight: 1)))) {
             $0.layout.selectedItemForAdding = item2.item
         }
-        await rouletteStore.send(.layout(.select(.init(item: item2.item, weight: 1, candidated: true))))
-        await rouletteStore.receive(.layout(.add(.init(item: item2.item, weight: item2.weight, candidated: true)))) {
+        await rouletteStore.send(.layout(.select(.init(item: item2.item, weight: 1, isCandidate: true))))
+        await rouletteStore.receive(.layout(.add(.init(item: item2.item, weight: item2.weight, isCandidate: true)))) {
             $0.layout.selectedItemForAdding = nil
         }
         

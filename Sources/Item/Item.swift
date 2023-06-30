@@ -98,12 +98,12 @@ public struct Item: Identifiable, Equatable, Codable {
 public struct ItemWithWeight: Equatable, Codable {
     public var item: Item
     public var weight: Int
-    public var candidated: Bool = false
+    public var isCandidate: Bool = false
 
-    public init(item: Item, weight: Int, candidated: Bool = false) {
+    public init(item: Item, weight: Int, isCandidate: Bool = false) {
         self.item = item
         self.weight = weight
-        self.candidated = candidated
+        self.isCandidate = isCandidate
     }
 }
 
@@ -342,24 +342,24 @@ public enum Rule: String, CaseIterable {
 }
 
 public func makeWheelData(history: [Item], weightWidthForSelecting: WeightWidth, weightWidthForHistory: WeightWidth, rule: Rule, selectedItem: Item?) -> [ItemWithWeight] {
-    let weightedArray = calcurate(history: history, weightWidth: weightWidthForHistory, rule: rule, selectedItem: selectedItem)
+    let weightedArray = calculate(history: history, weightWidth: weightWidthForHistory, rule: rule, selectedItem: selectedItem)
     let wheel = rule.wheel
-    let candidated = candidate(weightWidth: weightWidthForSelecting, rule: rule, selectedItem: selectedItem)
+    let isCandidate = candidate(weightWidth: weightWidthForSelecting, rule: rule, selectedItem: selectedItem)
     return wheel.map { item in
-        .init(item: item, weight: weightedArray.first(where: { $0.item.number == item.number })?.weight ?? 0, candidated: candidated.contains(where: { $0.number.str == item.number.str }))
+        .init(item: item, weight: weightedArray.first(where: { $0.item.number == item.number })?.weight ?? 0, isCandidate: isCandidate.contains(where: { $0.number.str == item.number.str }))
     }
 }
 
 public func makeLayoutData(history: [Item], weightWidthForSelecting: WeightWidth, weightWidthForHistory: WeightWidth, rule: Rule, selectedItem: Item?) -> [ItemWithWeight] {
-    let weightedArray = calcurate(history: history, weightWidth: weightWidthForHistory, rule: rule, selectedItem: selectedItem)
+    let weightedArray = calculate(history: history, weightWidth: weightWidthForHistory, rule: rule, selectedItem: selectedItem)
     let layout = rule.layout
-    let candidated = candidate(weightWidth: weightWidthForSelecting, rule: rule, selectedItem: selectedItem)
+    let candidates = candidate(weightWidth: weightWidthForSelecting, rule: rule, selectedItem: selectedItem)
     return layout.map { item in
-        .init(item: item, weight: weightedArray.first(where: { $0.item.number.str == item.number.str })?.weight ?? 0, candidated: candidated.contains(where: { $0.number.str == item.number.str }))
+        .init(item: item, weight: weightedArray.first(where: { $0.item.number.str == item.number.str })?.weight ?? 0, isCandidate: candidates.contains(where: { $0.number.str == item.number.str }))
     }
 }
 
-private func calcurate(history: [Item], weightWidth: WeightWidth, rule: Rule, selectedItem: Item?) -> [ItemWithWeight] {
+private func calculate(history: [Item], weightWidth: WeightWidth, rule: Rule, selectedItem: Item?) -> [ItemWithWeight] {
     let rawData = history.flatMap { item in
         weighting(item: item, weightWidth: weightWidth, rule: rule, selectedItem: selectedItem)
     }
@@ -399,7 +399,7 @@ public extension Array where Element == ItemWithWeight {
     func searchFor(width: WeightWidth, searchType: SearchType) -> ItemWithWeight {
         let item: ItemWithWeight?
         switch searchType {
-        case .deepeset:
+        case .deepest:
             item = self.max { lhs, rhs in
                 lhs.weight < rhs.weight
             }
@@ -420,7 +420,7 @@ public extension Array where Element == ItemWithWeight {
         }
 
         switch searchType {
-        case .deepeset:
+        case .deepest:
             let index = areaItemsArray.max(by: { $0.items.reduce(0) { $0 + $1.weight } < $1.items.reduce(0) { $0 + $1.weight } })?.index ?? 0
             return self[index]
         case .lightest:
@@ -460,6 +460,6 @@ public extension Array {
 }
 
 public enum SearchType {
-    case deepeset
+    case deepest
     case lightest
 }

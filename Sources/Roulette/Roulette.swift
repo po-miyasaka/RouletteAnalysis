@@ -62,7 +62,7 @@ public struct Roulette: ReducerProtocol {
             case let .layout(.add(item)):
 
                 return .task {
-                    .history(.add(item.item, isHit: item.candidated))
+                    .history(.add(item.item, isHit: item.isCandidate))
                 }
             case .layout:
                 break

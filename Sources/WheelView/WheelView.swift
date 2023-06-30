@@ -36,14 +36,14 @@ public struct WheelView: View {
 
     let width: Double = 290
 
-    func angles(culucuratedData: [ItemWithWeight]) -> [ItemWithWeightAndAngle] {
+    func angles(calculatedData: [ItemWithWeight]) -> [ItemWithWeightAndAngle] {
         let minAngle = Angle(degrees: -90)
         let maxAngle = Angle(degrees: 270)
-        let tickDegrees = (maxAngle.degrees - minAngle.degrees) / Double(culucuratedData.count)
+        let tickDegrees = (maxAngle.degrees - minAngle.degrees) / Double(calculatedData.count)
         var result = [ItemWithWeightAndAngle]()
 
-        for tick in 0 ..< culucuratedData.count {
-            let data = culucuratedData[tick]
+        for tick in 0 ..< calculatedData.count {
+            let data = calculatedData[tick]
             let angle = Angle(degrees: Double(tick) * tickDegrees)
             //            print(angle.degrees)
             result.append((data, angle))
@@ -52,9 +52,9 @@ public struct WheelView: View {
     }
 
     public var body: some View {
-        let calucuratedData = wheelData(roulette: rouletteViewStore.state, setting: settingViewStore.state)
-        let angles = angles(culucuratedData: calucuratedData)
-        let item = wheelViewStore.mode.searchType.flatMap { calucuratedData.searchFor(width: settingViewStore.weightWidthForPrediction, searchType: $0) }
+        let calculatedData = wheelData(roulette: rouletteViewStore.state, setting: settingViewStore.state)
+        let angles = angles(calculatedData: calculatedData)
+        let item = wheelViewStore.mode.searchType.flatMap { calculatedData.searchFor(width: settingViewStore.weightWidthForPrediction, searchType: $0) }
 
         Group {
             VStack(alignment: .center, spacing: 24) {
@@ -88,7 +88,7 @@ public struct WheelView: View {
 
     @ViewBuilder
     func rouletteNumbers(tick: Double, data: ItemWithWeightAndAngle) -> some View {
-        if data.itemWithWeight.candidated {
+        if data.itemWithWeight.isCandidate {
             Path { path in
 
                 //                    path.addLines([CGPoint(x: width / 2, y: width / 2)])

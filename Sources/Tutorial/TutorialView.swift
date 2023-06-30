@@ -24,7 +24,7 @@ public struct TutorialView: View {
     func form() -> some View {
         Form {
             Section("What's this app") {
-                Text("This app helps you analyse roulette history and predict the next number.")
+                Text("This app helps you analyze roulette history and predict the next number.")
             }
 
             Section("The layout") {
@@ -34,7 +34,7 @@ public struct TutorialView: View {
                     You can add a number to the history by double-tapping on a number.
                     If you make a mistake, you can remove the last number by tapping the trash button at the top right of the screen.
 
-                    The more times a number is entered, the deeper the colour of the cell.
+                    The more times a number is entered, the deeper the color of the cell.
                     Orange cells are selected in the wheel mentioned in the following section.
                     """
                 )
@@ -46,7 +46,7 @@ public struct TutorialView: View {
                     """
 
                     This is the Roulette wheel.
-                    The more times a number is hit and added to the history, the deeper the colour of the cells.
+                    The more times a number is hit and added to the history, the deeper the color of the cells.
                     When a number is added, the numbers around it become deeper.
                     You can set how many cells are affected by using the Setting view.
 

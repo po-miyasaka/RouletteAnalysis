@@ -46,7 +46,7 @@ public struct Wheel: ReducerProtocol {
         public var searchType: SearchType? {
             switch self {
             case .deepest:
-                return .deepeset
+                return .deepest
             case .lightest:
                 return .lightest
             default:

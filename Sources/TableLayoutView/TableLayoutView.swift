@@ -76,7 +76,7 @@ struct LayoutCell: View {
     @ViewBuilder
     var body: some View {
         ZStack {
-            if data.candidated {
+            if data.isCandidate {
                 Color.orange.opacity(1)
             } else {
 //                data.item.color.value.opacity((Double(data.weight) / 100.0) + 0.05)
