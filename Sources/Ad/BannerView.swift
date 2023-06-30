@@ -45,7 +45,9 @@ public enum Place: String {
             //        "ca-app-pub-6326437184905669/6995299249"
             view.load(GADRequest())
 
-            if let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+            if let windowScene = UIApplication.shared.connectedScenes.first(
+                where: { $0.activationState == .foregroundActive }
+            ) as? UIWindowScene {
                 let keyWindow = windowScene.windows.first { $0.isKeyWindow }
                 view.rootViewController = keyWindow?.rootViewController
             }
@@ -55,27 +57,10 @@ public enum Place: String {
         public func updateUIView(_: UIView, context _: Context) {}
 
         class Delegate: NSObject, GADBannerViewDelegate {
-            func bannerViewDidReceiveAd(_: GADBannerView) {
-                print("bannerViewDidReceiveAd")
-            }
-
             func bannerView(_: GADBannerView, didFailToReceiveAdWithError error: Error) {
                 print("bannerView:didFailToReceiveAdWithError: \(error.localizedDescription)")
             }
         }
     }
-
-    // #else
-//
-//    public struct AdBannerView: View {
-//        let place: Place
-//        public init(place: Place) {
-//            self.place = place
-//        }
-//
-//        public var body: some View {
-//            EmptyView()
-//        }
-//    }
 
 #endif

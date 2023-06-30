@@ -340,20 +340,46 @@ public enum Rule: String, CaseIterable {
 }
 
 public func makeWheelData(history: [Item], weightWidthForSelecting: WeightWidth, weightWidthForHistory: WeightWidth, rule: Rule, selectedItem: Item?) -> [ItemWithWeight] {
-    let weightedArray = calculate(history: history, weightWidth: weightWidthForHistory, rule: rule, selectedItem: selectedItem)
+    let weightedArray = calculate(
+        history: history,
+        weightWidth: weightWidthForHistory,
+        rule: rule,
+        selectedItem: selectedItem
+    )
     let wheel = rule.wheel
-    let isCandidate = candidate(weightWidth: weightWidthForSelecting, rule: rule, selectedItem: selectedItem)
+    let isCandidate = candidate(
+        weightWidth: weightWidthForSelecting,
+        rule: rule,
+        selectedItem: selectedItem
+    )
     return wheel.map { item in
-        .init(item: item, weight: weightedArray.first(where: { $0.item.number == item.number })?.weight ?? 0, isCandidate: isCandidate.contains(where: { $0.number.str == item.number.str }))
+        .init(
+            item: item,
+            weight: weightedArray.first(where: { $0.item.number == item.number })?.weight ?? 0,
+            isCandidate: isCandidate.contains(where: { $0.number.str == item.number.str })
+        )
     }
 }
 
 public func makeLayoutData(history: [Item], weightWidthForSelecting: WeightWidth, weightWidthForHistory: WeightWidth, rule: Rule, selectedItem: Item?) -> [ItemWithWeight] {
-    let weightedArray = calculate(history: history, weightWidth: weightWidthForHistory, rule: rule, selectedItem: selectedItem)
+    let weightedArray = calculate(
+        history: history,
+        weightWidth: weightWidthForHistory,
+        rule: rule,
+        selectedItem: selectedItem
+    )
     let layout = rule.layout
-    let candidates = candidate(weightWidth: weightWidthForSelecting, rule: rule, selectedItem: selectedItem)
+    let candidates = candidate(
+        weightWidth: weightWidthForSelecting,
+        rule: rule,
+        selectedItem: selectedItem
+    )
     return layout.map { item in
-        .init(item: item, weight: weightedArray.first(where: { $0.item.number.str == item.number.str })?.weight ?? 0, isCandidate: candidates.contains(where: { $0.number.str == item.number.str }))
+        .init(
+            item: item,
+            weight: weightedArray.first(where: { $0.item.number.str == item.number.str })?.weight ?? 0,
+            isCandidate: candidates.contains(where: { $0.number.str == item.number.str })
+        )
     }
 }
 

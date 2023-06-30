@@ -38,13 +38,21 @@ public struct History: ReducerProtocol {
         case setup
     }
 
-    public func reduce(into state: inout State, action: Action) -> ComposableArchitecture.EffectTask<Action> {
+    public func reduce(
+        into state: inout State,
+        action: Action
+    ) -> ComposableArchitecture.EffectTask<Action> {
         switch action {
         case let .change(value):
             state.displayLimit = value
         case let .add(item, isHit):
 
-            let addedItem: HistoryItem = .init(item: .init(number: item.number, color: item.color, id: uuid()), isHit: isHit)
+            let addedItem: HistoryItem = .init(
+                item: .init(number: item.number,
+                color: item.color,
+                id: uuid()),
+                isHit: isHit
+            )
             state.items.append(addedItem)
 
         case .removeLast:

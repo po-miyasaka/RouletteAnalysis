@@ -61,7 +61,10 @@ struct RouletteAnalysisApp: App {
     var body: some Scene {
         WindowGroup {
 #if os(macOS)
-            AppView(store: Store(initialState: AppFeature.State(), reducer: AppFeature()))
+            AppView(
+                store: Store(initialState: AppFeature.State(),
+                reducer: AppFeature())
+            )
 #else
             NavigationView {
                 AppView(store: Store(initialState: AppFeature.State(), reducer: AppFeature()))
