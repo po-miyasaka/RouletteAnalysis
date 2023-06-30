@@ -30,6 +30,7 @@ for file in $staged_files; do
         echo "$swiftlint_result"
     fi
 done
+
 echo "Spelling check start"
 for file in $staged_files; do
     cspell_result=$(cspell lint -c cspell.json --words-only --no-progress "$file")
