@@ -13,7 +13,6 @@ import Ad
 #endif
 import SwiftUI
 
-
 #if os(macOS)
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_: Notification) {
@@ -29,13 +28,13 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         if let googleAppID {
             FirebaseApp.configure()
 #if canImport(Ad)
-            
+
             GADMobileAds.sharedInstance().start(completionHandler: nil)
 #endif
         }
         return true
     }
-    
+
 }
 
 var googleAppID: String? {
@@ -57,7 +56,7 @@ struct RouletteAnalysisApp: App {
 #else
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 #endif
-    
+
     var body: some Scene {
         WindowGroup {
 #if os(macOS)
