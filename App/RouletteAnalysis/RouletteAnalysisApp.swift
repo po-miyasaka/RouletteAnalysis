@@ -31,7 +31,6 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
 #if canImport(Ad)
             
             GADMobileAds.sharedInstance().start(completionHandler: nil)
-            
 #endif
         }
         return true

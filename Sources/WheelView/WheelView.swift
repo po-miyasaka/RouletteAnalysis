@@ -55,7 +55,7 @@ public struct WheelView: View {
         let calculatedData = wheelData(roulette: rouletteViewStore.state, setting: settingViewStore.state)
         let angles = angles(calculatedData: calculatedData)
         let item = wheelViewStore.mode.searchType.flatMap { calculatedData.searchFor(width: settingViewStore.weightWidthForPrediction, searchType: $0) }
-        
+
         Group {
             VStack(alignment: .center, spacing: 24) {
                 ZStack(alignment: .center) {
