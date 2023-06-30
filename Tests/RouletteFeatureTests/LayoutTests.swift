@@ -14,26 +14,24 @@ import XCTest
 
 @MainActor
 final class LayoutTests: XCTestCase {
-    
+
     func testSelectNumber() async throws {
-        let layoutStore = TestStore(initialState: .init()
-                                    , reducer: {
+        let layoutStore = TestStore(initialState: .init(), reducer: {
             TableLayout()
         })
-        
+
         let item = Item(number: .n0, color: .black)
         let itemWithWeight = ItemWithWeight(item: item, weight: 9)
         await layoutStore.send(.select(itemWithWeight)) {
             $0.selectedItemForAdding = itemWithWeight.item
         }
     }
-    
-    
+
     // ViewStateをテストするためには依存元の環境自体を作り込む必要がありそう。
     // TestはStoreに指定StateとActionをテストするもの。
-    
+
     func testAddNumber_aroundRoulette() async throws {
-        
+
         let uuid = UUID(1)
         let rouletteStore = TestStore(initialState: .init(id: uuid), reducer: Roulette.init, withDependencies: {
             $0.uuid = UUIDGenerator({uuid})
@@ -42,7 +40,7 @@ final class LayoutTests: XCTestCase {
         await rouletteStore.send(.layout(.select(.init(item: item.item, weight: 1)))) {
             $0.layout.selectedItemForAdding = item.item
         }
-        
+
         await rouletteStore.send(.layout(.select(.init(item: item.item, weight: 1))))
         await rouletteStore.receive(.layout(.add(item))) {
             $0.layout.selectedItemForAdding = nil
@@ -63,7 +61,7 @@ final class LayoutTests: XCTestCase {
         await rouletteStore.receive(.layout(.add(.init(item: item2.item, weight: item2.weight, isCandidate: true)))) {
             $0.layout.selectedItemForAdding = nil
         }
-        
+
         await rouletteStore.receive(.history(.add(item2.item, isHit: true))) {
             var state = History.State()
             state.items = [
@@ -72,8 +70,6 @@ final class LayoutTests: XCTestCase {
             ]
             $0.history = state
         }
-        
-        
-        
+
     }
 }

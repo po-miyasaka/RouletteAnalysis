@@ -2,7 +2,7 @@
 
 
 # Please copy this file to .git/hooks
-
+echo $(pwd)
 command -v swiftformat >/dev/null 2>&1 || { echo >&2 "SwiftFormat not installed. Aborting."; exit 0; }
 
 command -v npm exec cspell >/dev/null 2>&1 || { echo >&2 "cSpell not installed. Aborting."; exit 0; }
@@ -29,9 +29,12 @@ for file in $staged_files; do
         echo "Swiftlint found style violations in $file:"
         echo "$swiftlint_result"
     fi
-    cspell_result=$(cspell "$file")
+done
+echo "Spelling check start"
+for file in $staged_files; do
+    cspell_result=$(cspell lint -c cspell.json --words-only --no-progress "$file")
     if [ -n "$cspell_result" ]; then
-        echo "cSpell found spelling errors in $file:"
+        echo "$file:"
         echo "$cspell_result"
     fi
 done
