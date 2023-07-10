@@ -73,7 +73,7 @@ public struct Setting: ReducerProtocol {
     public func reduce(into state: inout State, action: Action) -> ComposableArchitecture.EffectTask<Action> {
         switch action {
         case let .showChangeRuleMessage(rule):
-            
+
             return .task {
 #if os(macOS)
                 .alert(.change(rule))
@@ -81,8 +81,7 @@ public struct Setting: ReducerProtocol {
                 .actionSheet(.change(rule))
 #endif
             }
-            
-            
+
         case let .changeRule(rule):
             state.rule = rule
             return .fireAndForget {
