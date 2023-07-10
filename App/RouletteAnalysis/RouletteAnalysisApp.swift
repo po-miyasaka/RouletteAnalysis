@@ -25,7 +25,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        if let googleAppID {
+        if googleAppID != nil {
             FirebaseApp.configure()
 #if canImport(Ad)
 
