@@ -98,7 +98,7 @@ public struct SettingView: View {
     func form() -> some View {
         Form {
             Section {
-                Picker("Roulette Type", selection: settingsViewStore.binding(get: \.rule, send: Setting.Action.showChangeRuleAlert)) {
+                Picker("Roulette Type", selection: settingsViewStore.binding(get: \.rule, send: Setting.Action.showChangeRuleMessage)) {
                     ForEach(Rule.allCases, id: \.self) { rule in
                         Text(rule.displayName)
                     }
@@ -149,11 +149,11 @@ public struct SettingView: View {
                           secondaryButton: .cancel())
             })
             #else
-                $0.actionSheet(item: settingsViewStore.binding(get: { $0.activeAlert }, send: { v in Setting.Action.alert(v) }), content: { alert in
+            $0.actionSheet(item: settingsViewStore.binding(get: { $0.activeActionSheet }, send: { v in Setting.Action.actionSheet(v) }), content: { message in
 
-                    ActionSheet(title: Text(alert.displayText), buttons: [
+                    ActionSheet(title: Text(message.displayText), buttons: [
                         .destructive(Text("Change")) {
-                            if let rule = alert.rule { settingsViewStore.send(.changeRule(rule)) }
+                            if let rule = message.rule { settingsViewStore.send(.changeRule(rule)) }
                         },
                         .cancel()
                     ])

@@ -42,7 +42,6 @@ public enum Place: String {
             let view = GADBannerView(adSize: GADAdSizeBanner)
             view.delegate = delegate
             view.adUnitID = place.adUnitID
-            //        "ca-app-pub-6326437184905669/6995299249"
             view.load(GADRequest())
 
             if let windowScene = UIApplication.shared.connectedScenes.first(

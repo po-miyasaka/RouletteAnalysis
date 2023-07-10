@@ -23,7 +23,8 @@ public struct Setting: ReducerProtocol {
         public var rule: Rule = .theStar
         public var defaultDisplayedHistoryLimit: Int = 16
         public var screenLayout: ScreenLayout = .tab
-        public var activeAlert: ActiveAlert?
+        public var activeAlert: ActiveMessage?
+        public var activeActionSheet: ActiveMessage?
         public var isHidingAd: Bool = false
         public var isConnecting: Bool = false
         public init() {}
@@ -31,20 +32,21 @@ public struct Setting: ReducerProtocol {
 
     public enum Action: Equatable {
         case changeRule(Rule)
-        case showChangeRuleAlert(Rule)
+        case showChangeRuleMessage(Rule)
         case changeWeightForPrediction(WeightWidth)
         case changeWeightForHistory(WeightWidth)
         case changeDefaultDisplayedHistoryLimit(Int)
         case changeScreenLayout(ScreenLayout)
         case setup
-        case alert(ActiveAlert?)
+        case alert(ActiveMessage?)
+        case actionSheet(ActiveMessage?)
         case buyHidingAd
         case restore
         case hideAd
         case setConnecting(Bool)
     }
 
-    public enum ActiveAlert: Equatable, Identifiable {
+    public enum ActiveMessage: Equatable, Identifiable {
         public var id: String { displayText }
         case change(Rule)
         case purchase(String)
@@ -70,11 +72,17 @@ public struct Setting: ReducerProtocol {
 
     public func reduce(into state: inout State, action: Action) -> ComposableArchitecture.EffectTask<Action> {
         switch action {
-        case let .showChangeRuleAlert(rule):
-
+        case let .showChangeRuleMessage(rule):
+            
             return .task {
-                return .alert(.change(rule))
+#if os(macOS)
+                .alert(.change(rule))
+#else
+                .actionSheet(.change(rule))
+#endif
             }
+            
+            
         case let .changeRule(rule):
             state.rule = rule
             return .fireAndForget {
@@ -112,6 +120,9 @@ public struct Setting: ReducerProtocol {
             return .none
         case let .alert(value):
             state.activeAlert = value
+            return .none
+        case let .actionSheet(value):
+            state.activeActionSheet = value
             return .none
 
         case .hideAd:
