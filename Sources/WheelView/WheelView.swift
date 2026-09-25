@@ -54,7 +54,6 @@ public struct WheelView: View {
     public var body: some View {
         let calculatedData = wheelData(roulette: rouletteViewStore.state, setting: settingViewStore.state)
         let angles = angles(calculatedData: calculatedData)
-        let item = wheelViewStore.mode.searchType.flatMap { calculatedData.searchFor(width: settingViewStore.weightWidthForPrediction, searchType: $0) }
 
         Group {
             VStack(alignment: .center, spacing: 24) {
@@ -78,12 +77,6 @@ public struct WheelView: View {
                 }
             }
         }
-        .onChange(of: item, perform: { newValue in
-            // TCA doesn't allow knowing changes of states and sending action after a state changed, so doing it here.
-            if let item = newValue?.item, item.number != rouletteViewStore.selectedForPrediction?.number {
-                wheelViewStore.send(.select(item))
-            }
-        })
     }
 
     @ViewBuilder

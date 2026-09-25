@@ -73,23 +73,59 @@ struct LayoutCell: View {
     let data: ItemWithWeight
     let tapAction: (ItemWithWeight) -> Void
 
+    private var backgroundOpacity: Double {
+        min(Double(data.weight) / 100.0 + 0.05, 1)
+    }
+
+    private var textColor: SwiftUI.Color {
+        if isSelected { return .white }
+        if data.isCandidate { return .black }
+        return LayoutCellContrast.prefersLightText(color: data.item.color, opacity: backgroundOpacity) ? .white : .black
+    }
+
     @ViewBuilder
     var body: some View {
         ZStack {
             if data.isCandidate {
                 Color.orange.opacity(1)
             } else {
-//                data.item.color.value.opacity((Double(data.weight) / 100.0) + 0.05)
-                data.item.color.value.opacity(0.1)
+                data.item.color.value.opacity(backgroundOpacity)
             }
             if isSelected { Color.accentColor }
             Text("\(data.item.number.str)")
-                .foregroundColor(isSelected ? .white : .black)
+                .foregroundColor(textColor)
                 .padding(10)
 
         }.onTapGesture {
             tapAction(data)
         }.cornerRadius(4)
+    }
+}
+
+/// Picks a legible text color for a cell whose background is `color` at `opacity` over a white ground.
+enum LayoutCellContrast {
+    private static func rgb(of color: Item.Color) -> (r: Double, g: Double, b: Double) {
+        switch color {
+        case .red: return (1, 0, 0)
+        case .black: return (0, 0, 0)
+        case .green: return (0, 1, 0)
+        }
+    }
+
+    static func prefersLightText(color: Item.Color, opacity: Double) -> Bool {
+        let base = rgb(of: color)
+        let blended = (
+            r: base.r * opacity + (1 - opacity),
+            g: base.g * opacity + (1 - opacity),
+            b: base.b * opacity + (1 - opacity)
+        )
+        let luminance = 0.2126 * linear(blended.r) + 0.7152 * linear(blended.g) + 0.0722 * linear(blended.b)
+        // White text wins over black text when its contrast ratio is higher: 1.05 / (L + 0.05) > (L + 0.05) / 0.05
+        return luminance < 0.179
+    }
+
+    private static func linear(_ value: Double) -> Double {
+        value <= 0.03928 ? value / 12.92 : pow((value + 0.055) / 1.055, 2.4)
     }
 }
 

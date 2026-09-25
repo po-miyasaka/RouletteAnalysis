@@ -6,6 +6,7 @@
 //
 
 import ComposableArchitecture
+import Item
 import Roulette
 import Setting
 import SwiftUI
@@ -157,12 +158,43 @@ public struct AppFeature: ReducerProtocol {
         }.ifLet(\.current, action: /AppFeature.Action.roulette, then: {
             Roulette()
         })
+
+        // Views may be off-screen (e.g. a page of the TabView), so the prediction must not depend on them.
+        Reduce { state, _ in
+            state = state.refreshingPrediction()
+            return .none
+        }
     }
 
     func roulettes() -> [Roulette.State] {
         guard let roulettesData = userDefaults.roulettes,
             let roulettes = try? JSONDecoder().decode([Roulette.State].self, from: roulettesData) else { return [] }
         return roulettes
+    }
+}
+
+extension AppFeature.State {
+    /// Returns a copy whose `selectedForPrediction` follows the wheel mode (deepest / lightest).
+    /// Does nothing in "Select by yourself" mode.
+    func refreshingPrediction() -> Self {
+        guard let current, let searchType = current.wheel.mode.searchType else { return self }
+
+        let history = current.history.limitedHistory.map(\.item)
+        let next: Item? = history.isEmpty ? nil : makeWheelData(
+            history: history,
+            weightWidthForSelecting: settings.weightWidthForPrediction,
+            weightWidthForHistory: settings.weightWidthForHistory,
+            rule: settings.rule,
+            selectedItem: nil
+        )
+        .searchFor(width: settings.weightWidthForPrediction, searchType: searchType)
+        .item
+
+        guard next?.number != current.selectedForPrediction?.number else { return self }
+
+        var updated = self
+        updated.current?.selectedForPrediction = next
+        return updated
     }
 }
 
